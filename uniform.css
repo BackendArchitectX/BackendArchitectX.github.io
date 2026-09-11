@@ -1,45 +1,99 @@
-/* Full-line justification override */
-body * {
-  text-align: justify !important;
-  text-align-last: justify !important;
-  text-justify: inter-word !important;
-}
+/* Uniform full-line justification */
 
-p, dd, dt, li, h1, h2, h3, h4, h5, h6,
+/* Every real text container fills its available column and justifies every line. */
+p,
+dd,
+dt,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.overline,
+.section-no,
+.label,
+.source,
+.type,
+.methods,
+.tech,
+.status,
+.stack,
+.repo,
+.state,
+.domain,
+.date,
+.role,
 .hero-copy,
-.section-head p,
+.section-head > p,
 .system-body,
-.system-body p,
-.system-body .methods,
+.system-body > p,
 .feature-project p,
-.feature-project .tech,
-.lab-row p,
-.lab-row .stack,
+.lab-row > p,
 .oss-entry p,
-.oss-entry .domain,
-.timeline-row p,
-.timeline-row .role,
+.timeline-row > p,
 .depth p,
 .contact p,
 .case-title .lede,
-.case-head p,
+.case-head > p,
 .case-fact div,
+.node strong,
 .node span,
+.branch strong,
 .branch span,
 .record-row p,
 .record-row .outcome,
 .callout,
-.overline,
-.section-no,
-.meta-row dd {
-  width: 100%;
+.benchmark strong,
+.benchmark span,
+.evidence-line strong,
+.evidence-line span {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  white-space: normal !important;
   text-align: justify !important;
   text-align-last: justify !important;
   text-justify: inter-word !important;
-  hyphens: auto;
+  hyphens: none !important;
 }
 
-/* Remove implementation-detail footer copy requested by owner. */
+/* Make interactive text participate in the same alignment without breaking flex/grid layout. */
+.nav a,
+.header-actions a,
+.quick-links a,
+.feature-links a,
+.contact-links a,
+.row-link,
+.back,
+.repo-cta a {
+  text-align: justify !important;
+  text-align-last: justify !important;
+  text-justify: inter-word !important;
+}
+
+/* Remove older width caps that caused visibly ragged blocks. */
+.hero-copy,
+.feature-project p,
+.callout {
+  max-width: none !important;
+}
+
+/* Stretch text-bearing grid cells so their right edge is consistent. */
+.section-head > *,
+.system-row > *,
+.lab-row > *,
+.oss-entry > *,
+.timeline-row > *,
+.depth,
+.contact-grid > *,
+.case-title > *,
+.case-head > *,
+.record-row > * {
+  min-width: 0 !important;
+}
+
+/* Footer cleanup requested by owner. */
 .footer-inner > span:last-child {
   display: none !important;
 }
@@ -48,7 +102,25 @@ p, dd, dt, li, h1, h2, h3, h4, h5, h6,
 }
 
 @media (max-width: 720px) {
-  body * {
+  p,
+  dd,
+  dt,
+  h1,
+  h2,
+  h3,
+  .hero-copy,
+  .section-head > p,
+  .system-body,
+  .feature-project p,
+  .lab-row > p,
+  .oss-entry p,
+  .timeline-row > p,
+  .depth p,
+  .contact p,
+  .case-title .lede,
+  .case-head > p,
+  .record-row p,
+  .callout {
     text-align: justify !important;
     text-align-last: justify !important;
   }
