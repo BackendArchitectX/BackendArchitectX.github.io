@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zu') {
-      url.searchParams.set('v', '20260911zu');
+    if (url.searchParams.get('v') !== '20260911zv') {
+      url.searchParams.set('v', '20260911zv');
       link.href = url.toString();
     }
   });
@@ -81,7 +81,7 @@
       }
     }
 
-    /* Mobile is deliberately ragged-right. Alignment comes from a common measure, not stretched words. */
+    /* Mobile: justify readable paragraph copy only; headings and compact metadata stay natural. */
     @media (max-width: 820px) {
       .hero-copy,
       .proof-row p,
@@ -99,13 +99,15 @@
       .callout {
         width: 100% !important;
         max-width: none !important;
-        text-align: left !important;
-        text-align-last: auto !important;
-        text-justify: auto !important;
-        hyphens: none !important;
-        word-spacing: normal !important;
+        text-align: justify !important;
+        text-align-last: left !important;
+        text-justify: inter-word !important;
+        hyphens: auto !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        word-spacing: 0 !important;
         letter-spacing: normal !important;
-        text-wrap: pretty !important;
+        text-wrap: wrap !important;
       }
 
       .hero h1,
@@ -156,10 +158,9 @@
         grid-column: 1 !important;
         margin: 18px 0 0 !important;
         font-size: 16px !important;
-        line-height: 1.6 !important;
+        line-height: 1.62 !important;
       }
 
-      /* Production cards should share the same left edge as the section heading on phones. */
       .system-row {
         grid-template-columns: 1fr !important;
         gap: 8px !important;
@@ -252,7 +253,7 @@
       .depth p,
       .contact p {
         font-size: 15px !important;
-        line-height: 1.62 !important;
+        line-height: 1.65 !important;
       }
 
       .system-name h3,
