@@ -1,0 +1,72 @@
+/* Mobile-only natural justification.
+   Long-form copy is justified with a natural final line and browser hyphenation.
+   Compact metrics, metadata, labels and headings remain left aligned. */
+@media (max-width: 820px) {
+  .hero-copy,
+  .section-head > p,
+  .system-body > p,
+  .feature-project p,
+  .lab-row > p,
+  .oss-entry p,
+  .timeline-row > p,
+  .depth p,
+  .contact p,
+  .case-title .lede,
+  .case-head > p,
+  .record-row p,
+  .callout {
+    text-align: justify !important;
+    text-align-last: left !important;
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    word-spacing: normal !important;
+    letter-spacing: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  /* Keep narrow/compact content natural rather than stretching it. */
+  .proof-row p,
+  .methods,
+  .tech,
+  .lab-row .stack,
+  .oss-entry .domain,
+  .meta-row dd,
+  .skill-lines,
+  .evidence-line,
+  .contact-links,
+  .hero h1,
+  .section-head h2,
+  .contact h2,
+  .case-title h1,
+  .case-head h2,
+  .system-name h3,
+  .oss-entry h3,
+  .timeline-row h3,
+  .lab-row h3,
+  .depth h3 {
+    text-align: left !important;
+    text-align-last: auto !important;
+    text-justify: auto !important;
+    hyphens: none !important;
+    -webkit-hyphens: none !important;
+    word-spacing: normal !important;
+  }
+}
+
+/* Very narrow phones get slightly safer wrapping while preserving natural justification. */
+@media (max-width: 380px) {
+  .hero-copy,
+  .section-head > p,
+  .system-body > p,
+  .feature-project p,
+  .oss-entry p,
+  .timeline-row > p,
+  .depth p,
+  .contact p {
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+  }
+}
