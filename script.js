@@ -6,8 +6,13 @@
     document.head.appendChild(link);
   };
 
-  loadStylesheet('/readability.css?v=20260911c');
-  loadStylesheet('/uniform.css?v=20260911c');
+  loadStylesheet('/readability.css?v=20260911d');
+  loadStylesheet('/uniform.css?v=20260911d');
+
+  const footerMeta = document.querySelector('.footer-inner > span:last-child');
+  if (footerMeta && footerMeta.textContent.includes('Static site')) {
+    footerMeta.remove();
+  }
 
   const year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
