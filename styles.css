@@ -188,6 +188,15 @@ body{font-size:18px}
     overflow-wrap:normal;
     word-spacing:normal!important;
   }
+
+  /* Contact copy: justify full lines while keeping the final line natural. */
+  .contact p{
+    text-align:justify!important;
+    text-align-last:left!important;
+    text-justify:inter-word!important;
+    hyphens:auto!important;
+    word-spacing:normal!important;
+  }
 }
 
 /* Career header: use the available desktop width instead of leaving a dead right column. */
