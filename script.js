@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zn') {
-      url.searchParams.set('v', '20260911zn');
+    if (url.searchParams.get('v') !== '20260911zo') {
+      url.searchParams.set('v', '20260911zo');
       link.href = url.toString();
     }
   });
@@ -38,6 +38,16 @@
         text-align-last: left !important;
         text-justify: inter-word !important;
         text-wrap: wrap !important;
+        hyphens: none !important;
+        word-spacing: normal !important;
+      }
+
+      /* Public systems supporting copy follows the same left/right measure without stretching its last line. */
+      #systems .section-head > p {
+        width: 100% !important;
+        text-align: justify !important;
+        text-align-last: left !important;
+        text-justify: inter-word !important;
         hyphens: none !important;
         word-spacing: normal !important;
       }
