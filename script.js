@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zt') {
-      url.searchParams.set('v', '20260911zt');
+    if (url.searchParams.get('v') !== '20260911zu') {
+      url.searchParams.set('v', '20260911zu');
       link.href = url.toString();
     }
   });
@@ -27,7 +27,6 @@
         word-spacing: normal !important;
       }
 
-      /* Large section headings: true justification on a controlled measure so spacing stays editorial. */
       #production .section-head h2,
       #systems .section-head h2 {
         width: 100% !important;
@@ -43,7 +42,6 @@
         word-spacing: normal !important;
       }
 
-      /* Short engineering headline: never stretch a single line to fake justification. */
       #engineering .section-head h2 {
         width: 100% !important;
         max-width: 1000px !important;
@@ -59,7 +57,6 @@
         word-spacing: normal !important;
       }
 
-      /* Public-systems supporting copy can use the full editorial measure. */
       #systems .section-head > p {
         width: 100% !important;
         max-width: 1260px !important;
@@ -70,7 +67,6 @@
         word-spacing: normal !important;
       }
 
-      /* Engineering supporting copy uses a shorter line so justification stays subtle. */
       #engineering .section-head > p {
         width: 100% !important;
         max-width: 920px !important;
@@ -85,7 +81,7 @@
       }
     }
 
-    /* Mobile typography must be natural, never mechanically justified. */
+    /* Mobile is deliberately ragged-right. Alignment comes from a common measure, not stretched words. */
     @media (max-width: 820px) {
       .hero-copy,
       .proof-row p,
@@ -101,6 +97,8 @@
       .case-head > p,
       .record-row p,
       .callout {
+        width: 100% !important;
+        max-width: none !important;
         text-align: left !important;
         text-align-last: auto !important;
         text-justify: auto !important;
@@ -115,65 +113,133 @@
       .contact h2,
       .case-title h1,
       .case-head h2 {
-        max-width: 100% !important;
+        width: 100% !important;
+        max-width: none !important;
         text-align: left !important;
         text-align-last: auto !important;
         text-justify: auto !important;
         hyphens: none !important;
         word-spacing: normal !important;
-        text-wrap: balance !important;
+        white-space: normal !important;
+        text-wrap: pretty !important;
       }
 
       .section {
-        padding: 58px 0 !important;
+        padding: 56px 0 !important;
       }
 
       .section-head {
-        row-gap: 10px !important;
-        margin-bottom: 34px !important;
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+        row-gap: 0 !important;
+        margin-bottom: 32px !important;
       }
 
-      .section-head h2 {
-        font-size: clamp(34px, 8.8vw, 44px) !important;
-        line-height: 1.02 !important;
-        letter-spacing: -0.038em !important;
-      }
-
-      .section-head > p {
-        max-width: 100% !important;
-        font-size: 16px !important;
-        line-height: 1.58 !important;
-      }
-
-      .section-no {
-        padding-top: 0 !important;
+      .section-head .section-no {
+        grid-column: 1 !important;
+        grid-row: auto !important;
+        margin: 0 0 14px !important;
+        padding: 0 !important;
         font-size: 10px !important;
         line-height: 1.45 !important;
       }
 
+      .section-head h2 {
+        grid-column: 1 !important;
+        margin: 0 !important;
+        font-size: clamp(32px, 8.6vw, 40px) !important;
+        line-height: 1.04 !important;
+        letter-spacing: -0.036em !important;
+      }
+
+      .section-head > p {
+        grid-column: 1 !important;
+        margin: 18px 0 0 !important;
+        font-size: 16px !important;
+        line-height: 1.6 !important;
+      }
+
+      /* Production cards should share the same left edge as the section heading on phones. */
+      .system-row {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        padding: 28px 0 !important;
+      }
+
+      .system-index,
+      .system-name,
+      .system-body,
+      .system-evidence {
+        grid-column: 1 !important;
+      }
+
+      .system-index {
+        margin: 0 0 2px !important;
+      }
+
+      .system-name h3 {
+        margin-top: 7px !important;
+      }
+
+      .system-body {
+        margin-top: 4px !important;
+      }
+
+      .system-evidence {
+        margin-top: 8px !important;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+      }
+
+      .contact-grid > * {
+        grid-column: 1 !important;
+      }
+
+      .contact .section-no {
+        margin-bottom: 18px !important;
+      }
+
       .contact h2 {
-        font-size: clamp(34px, 9vw, 44px) !important;
-        line-height: 1.02 !important;
-        letter-spacing: -0.04em !important;
+        margin: 0 !important;
+        font-size: clamp(32px, 8.8vw, 40px) !important;
+        line-height: 1.04 !important;
+        letter-spacing: -0.038em !important;
+      }
+
+      .contact-grid > div:last-child {
+        margin-top: 22px !important;
       }
 
       .system-name h3,
       .oss-entry h3,
       .timeline-row h3,
-      .lab-row h3 {
+      .lab-row h3,
+      .depth h3 {
+        text-align: left !important;
         text-wrap: pretty !important;
       }
     }
 
     @media (max-width: 540px) {
+      :root {
+        --gutter: 18px;
+      }
+
+      .hero {
+        padding-top: 46px !important;
+      }
+
       .hero h1 {
-        font-size: clamp(40px, 11vw, 48px) !important;
-        line-height: .99 !important;
+        font-size: clamp(38px, 10.7vw, 44px) !important;
+        line-height: 1 !important;
       }
 
       .section-head h2,
       .contact h2 {
-        font-size: clamp(32px, 9.6vw, 40px) !important;
+        font-size: clamp(30px, 8.8vw, 36px) !important;
       }
 
       .hero-copy,
@@ -185,8 +251,8 @@
       .timeline-row > p,
       .depth p,
       .contact p {
-        font-size: 16px !important;
-        line-height: 1.58 !important;
+        font-size: 15px !important;
+        line-height: 1.62 !important;
       }
 
       .system-name h3,
@@ -198,15 +264,23 @@
       }
 
       .depth h3 {
-        font-size: 18px !important;
+        font-size: 17px !important;
       }
 
       .feature-project h3 {
-        font-size: clamp(34px, 10vw, 42px) !important;
+        font-size: clamp(32px, 9vw, 38px) !important;
       }
 
       .section {
-        padding: 52px 0 !important;
+        padding: 48px 0 !important;
+      }
+
+      .section-head {
+        margin-bottom: 28px !important;
+      }
+
+      .section-head > p {
+        margin-top: 15px !important;
       }
     }
 
@@ -225,12 +299,10 @@
       white-space: nowrap;
     }
 
-    /* First line fills the measure; separators are independent flex items so they sit centered between skills. */
     .hero-side .skill-line--full {
       justify-content: space-between;
     }
 
-    /* Second line stays natural-width and uses the same separator placement. */
     .hero-side .skill-line--natural {
       justify-content: flex-start;
       gap: 8px;
@@ -311,7 +383,6 @@
   `;
   document.head.appendChild(desktopTypography);
 
-  /* Keep NOW and BEFORE exactly as authored; only structure PRIMARY and ALSO. */
   const profileRows = [...document.querySelectorAll('.hero-side .meta-row')];
   if (profileRows.length >= 4) {
     const setSkillRow = (row, lines) => {
