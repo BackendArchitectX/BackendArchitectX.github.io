@@ -4,19 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Pranay Kadu — backend software engineer working across Java, Spring Boot, distributed systems, performance and production reliability.">
+  <meta name="author" content="Pranay Kadu">
   <meta name="theme-color" content="#f4f4f0">
+  <meta property="og:title" content="Pranay Kadu — Backend Software Engineer">
+  <meta property="og:description" content="Production backend systems, public systems work and upstream engineering across Java, distributed systems, performance and reliability.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://backendarchitectx.github.io/">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://backendarchitectx.github.io/">
   <title>Pranay Kadu — Backend Software Engineer</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260911f">
+  <link rel="stylesheet" href="uniform.css?v=20260911f">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="shell header-inner">
-    <a class="identity" href="#top"><strong>Pranay Kadu</strong><span>Backend Software Engineer</span></a>
-    <nav class="nav" aria-label="Primary"><a href="#production">Production</a><a href="#systems">Systems</a><a href="#opensource">Open source</a><a href="#career">Career</a></nav>
+    <a class="identity" href="#top" aria-label="Pranay Kadu, portfolio home"><strong>Pranay Kadu</strong><span>Backend Software Engineer</span></a>
+    <nav class="nav" aria-label="Primary navigation"><a href="#production">Production</a><a href="#systems">Systems</a><a href="#opensource">Open source</a><a href="#career">Career</a></nav>
     <div class="header-actions"><a href="mailto:pranayp.kadu@gmail.com">Email</a></div>
   </div>
 </header>
+
 <main id="main">
   <section id="top" class="hero shell">
     <div class="hero-grid">
@@ -25,14 +34,14 @@
         <h1>I work on the parts of backend systems where <em>correctness, latency and failure behavior become visible.</em></h1>
         <p class="hero-copy">Software Engineer with 4+ years across fraud screening, financial workflows and integration systems. I build services, tune hot paths, reason about transaction boundaries, and stay close enough to production to understand how the system actually fails.</p>
       </div>
-      <aside class="hero-side">
+      <aside class="hero-side" aria-label="Engineering profile summary">
         <dl>
           <div class="meta-row"><dt>Now</dt><dd><strong>Software Engineer</strong><br>Linux Socials · Apr 2025 — Present</dd></div>
           <div class="meta-row"><dt>Before</dt><dd>Associate Software Engineer + Technical Intern<br>Merkle Inspire · 2021 — 2024</dd></div>
           <div class="meta-row"><dt>Primary</dt><dd>Java · Spring Boot · REST · Hibernate/JPA · MySQL · Redis · AWS · EKS</dd></div>
           <div class="meta-row"><dt>Also</dt><dd>Kafka · concurrency · Docker · Kubernetes · Jenkins · CloudWatch · JFR</dd></div>
         </dl>
-        <div class="quick-links"><a href="https://github.com/BackendArchitectX" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#contact">Contact ↓</a></div>
+        <div class="quick-links"><a href="#production">Selected work ↓</a><a href="https://github.com/BackendArchitectX" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#contact">Contact ↓</a></div>
       </aside>
     </div>
 
@@ -79,7 +88,7 @@
       <div class="section-head">
         <div class="section-no">02 / Public systems</div>
         <h2>Projects built to go below framework-level application code.</h2>
-        <p>These are public artifacts. They are useful because a reviewer can inspect the implementation, constraints, tests and documentation directly.</p>
+        <p>Public artifacts matter because a reviewer can inspect the implementation, constraints, tests and documentation directly.</p>
       </div>
 
       <article class="feature-project">
@@ -113,7 +122,7 @@
       <div class="section-head">
         <div class="section-no">03 / Upstream engineering</div>
         <h2>Small fixes, difficult failure modes.</h2>
-        <p>I care more about whether the failure mode is real and the test proves the fix than about the apparent size of the diff.</p>
+        <p>The signal here is not diff size. It is whether the failure mode is real, the fix belongs at the right boundary, and the regression test proves it.</p>
       </div>
       <div class="oss-table">
         <a class="oss-entry" href="https://github.com/AutoMQ/automq/pull/3493" target="_blank" rel="noreferrer"><span class="repo">AutoMQ</span><span class="state">Merged</span><div><h3>Skip AutoBalancer metrics reporter on controller-only nodes</h3><p>Process-role handling prevented broker listener resolution and reporter startup where the broker role was absent, with regression coverage across role combinations.</p></div><span class="domain">runtime / roles</span></a>
@@ -128,7 +137,7 @@
       <div class="section-head">
         <div class="section-no">04 / Career record</div>
         <h2>Production ownership grew with the systems.</h2>
-        <p>Experience and project claims below are kept aligned with the resumes used to build this portfolio.</p>
+        <p>Experience and project claims are kept aligned with the resumes used to build this portfolio.</p>
       </div>
       <div class="timeline">
         <div class="timeline-row"><span class="date">APR 2025 — NOW</span><div><h3>Linux Socials</h3><span class="role">Software Engineer</span></div><p>Designed and owned fraud-screening backend services, tuned latency and throughput, hardened dependency behavior, and supported production through observability, incident response, runbooks and RCA.</p></div>
@@ -158,7 +167,8 @@
     </div>
   </section>
 </main>
-<footer class="footer"><div class="shell footer-inner"><span>Pranay Kadu</span><span>Static site · no framework dependency · <span id="year"></span></span></div></footer>
-<script src="script.js"></script>
+
+<footer class="footer"><div class="shell footer-inner"><span>Pranay Kadu</span><a href="#top">Back to top ↑</a></div></footer>
+<script src="script.js?v=20260911f"></script>
 </body>
 </html>
