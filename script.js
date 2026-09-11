@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zf') {
-      url.searchParams.set('v', '20260911zf');
+    if (url.searchParams.get('v') !== '20260911zg') {
+      url.searchParams.set('v', '20260911zg');
       link.href = url.toString();
     }
   });
@@ -64,19 +64,19 @@
 
     .hero-side .skill-line--full span:not(:last-child)::after {
       content: " ·";
-      margin-left: 3px;
+      margin-left: 2px;
       font-weight: 500;
       color: #000 !important;
-      opacity: .45;
+      opacity: .65;
     }
 
     .hero-side .skill-line--natural span + span::before {
       content: "·";
       display: inline-block;
-      margin: 0 11px;
+      margin: 0 8px;
       font-weight: 500;
       color: #000 !important;
-      opacity: .45;
+      opacity: .65;
     }
 
     .hero-side .quick-links {
@@ -117,10 +117,10 @@
       .hero-side .skill-line--natural span + span::before {
         content: "·";
         display: inline-block;
-        margin: 0 8px;
+        margin: 0 7px;
         font-weight: 500;
         color: #000 !important;
-        opacity: .45;
+        opacity: .65;
       }
 
       .hero-side .skill-line--full span:not(:last-child)::after {
