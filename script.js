@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911j') {
-      url.searchParams.set('v', '20260911j');
+    if (url.searchParams.get('v') !== '20260911m') {
+      url.searchParams.set('v', '20260911m');
       link.href = url.toString();
     }
   });
