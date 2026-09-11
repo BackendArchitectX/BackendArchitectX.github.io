@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zg') {
-      url.searchParams.set('v', '20260911zg');
+    if (url.searchParams.get('v') !== '20260911zh') {
+      url.searchParams.set('v', '20260911zh');
       link.href = url.toString();
     }
   });
@@ -50,7 +50,6 @@
     /* Second line is intentionally natural-width; do not force its last item to Contact. */
     .hero-side .skill-line--natural {
       justify-content: flex-start;
-      gap: 0;
     }
 
     .hero-side .skill-line span {
@@ -62,21 +61,21 @@
       color: #000 !important;
     }
 
-    .hero-side .skill-line--full span:not(:last-child)::after {
-      content: " ·";
-      margin-left: 2px;
-      font-weight: 500;
-      color: #000 !important;
-      opacity: .65;
-    }
-
-    .hero-side .skill-line--natural span + span::before {
+    /* One separator treatment everywhere so every dot has the same size, weight and baseline. */
+    .hero-side .skill-line span:not(:last-child)::after {
       content: "·";
       display: inline-block;
-      margin: 0 8px;
-      font-weight: 500;
+      margin-left: 6px;
+      font-size: .72em;
+      line-height: 1;
+      font-weight: 600;
       color: #000 !important;
-      opacity: .65;
+      opacity: .58;
+      vertical-align: .08em;
+    }
+
+    .hero-side .skill-line--natural span:not(:last-child) {
+      margin-right: 12px;
     }
 
     .hero-side .quick-links {
@@ -113,18 +112,14 @@
         row-gap: 2px;
       }
 
-      .hero-side .skill-line--full span + span::before,
-      .hero-side .skill-line--natural span + span::before {
-        content: "·";
-        display: inline-block;
-        margin: 0 7px;
-        font-weight: 500;
-        color: #000 !important;
-        opacity: .65;
+      .hero-side .skill-line span:not(:last-child) {
+        margin-right: 10px;
       }
 
-      .hero-side .skill-line--full span:not(:last-child)::after {
-        content: none;
+      .hero-side .skill-line span:not(:last-child)::after {
+        margin-left: 5px;
+        font-size: .72em;
+        vertical-align: .08em;
       }
 
       .hero-side .quick-links {
