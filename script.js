@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zl') {
-      url.searchParams.set('v', '20260911zl');
+    if (url.searchParams.get('v') !== '20260911zm') {
+      url.searchParams.set('v', '20260911zm');
       link.href = url.toString();
     }
   });
@@ -26,15 +26,19 @@
         word-spacing: normal !important;
       }
 
-      /* Large headings should never be mechanically justified: balance the lines instead. */
+      /* Production heading: true justification, but on a controlled measure so spacing stays editorial. */
       #production .section-head h2 {
-        text-align: left !important;
-        text-align-last: auto !important;
-        text-justify: auto !important;
+        width: 100% !important;
+        max-width: 1260px !important;
+        font-size: clamp(52px, 4.25vw, 64px) !important;
+        line-height: 1.035 !important;
+        letter-spacing: -0.045em !important;
+        text-align: justify !important;
+        text-align-last: left !important;
+        text-justify: inter-word !important;
+        text-wrap: wrap !important;
         hyphens: none !important;
         word-spacing: normal !important;
-        text-wrap: balance !important;
-        max-width: 1420px !important;
       }
     }
 
