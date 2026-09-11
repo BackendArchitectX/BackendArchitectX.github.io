@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zm') {
-      url.searchParams.set('v', '20260911zm');
+    if (url.searchParams.get('v') !== '20260911zn') {
+      url.searchParams.set('v', '20260911zn');
       link.href = url.toString();
     }
   });
@@ -26,8 +26,9 @@
         word-spacing: normal !important;
       }
 
-      /* Production heading: true justification, but on a controlled measure so spacing stays editorial. */
-      #production .section-head h2 {
+      /* Large section headings: true justification on a controlled measure so spacing stays editorial. */
+      #production .section-head h2,
+      #systems .section-head h2 {
         width: 100% !important;
         max-width: 1260px !important;
         font-size: clamp(52px, 4.25vw, 64px) !important;
