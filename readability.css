@@ -1,50 +1,64 @@
-/* Readability layer: larger screen typography + justified prose */
+/* Readability layer: larger typography + full text justification */
+html,body,*{
+  text-align:justify!important;
+  text-justify:inter-word!important;
+}
 body{font-size:18px!important}
-.identity strong{font-size:20px!important}.identity span{font-size:16px!important}
-.nav a,.header-actions a{font-size:16px!important}
+p,dd,li,span,a,div{hyphens:auto}
+
+/* Header */
+.identity strong{font-size:22px!important}.identity span{font-size:17px!important}
+.nav a,.header-actions a{font-size:17px!important}
+
+/* Hero */
 .overline{font-size:15px!important}
+.hero h1{font-size:clamp(58px,6.4vw,92px)!important;line-height:.96!important;letter-spacing:-.06em!important}
 .hero-copy{font-size:22px!important;line-height:1.68!important}
 .meta-row dt{font-size:13px!important}.meta-row dd{font-size:17px!important;line-height:1.6!important}
 .quick-links a{font-size:16px!important}
-.proof-row .label,.proof-row .source{font-size:13px!important}.proof-row strong{font-size:26px!important}.proof-row p{font-size:17px!important;line-height:1.65!important}
-.section-no{font-size:14px!important}.section-head p{font-size:18px!important;line-height:1.72!important}
-.system-index{font-size:14px!important}.system-name .type{font-size:13px!important}.system-name h3{font-size:27px!important;line-height:1.18!important}.system-body{font-size:18px!important;line-height:1.72!important}.system-body .methods{font-size:15px!important;line-height:1.6!important}.evidence-line strong{font-size:18px!important}.evidence-line span{font-size:14px!important}.row-link{font-size:15px!important}
-.feature-project p{font-size:18px!important;line-height:1.76!important}.feature-project .tech{font-size:15px!important}.benchmark strong{font-size:27px!important}.benchmark span{font-size:14px!important;line-height:1.55!important}.feature-links a{font-size:15px!important}
-.lab-row .status{font-size:13px!important}.lab-row h3{font-size:24px!important}.lab-row p{font-size:18px!important;line-height:1.72!important}.lab-row .stack{font-size:14px!important;line-height:1.6!important}
-.oss-entry .repo{font-size:18px!important}.oss-entry .state{font-size:13px!important}.oss-entry h3{font-size:22px!important;line-height:1.4!important}.oss-entry p{font-size:18px!important;line-height:1.68!important}.oss-entry .domain{font-size:14px!important}
-.timeline-row .date{font-size:13px!important}.timeline-row h3{font-size:24px!important}.timeline-row .role{font-size:17px!important}.timeline-row p{font-size:18px!important;line-height:1.72!important}
-.depth h3{font-size:19px!important}.depth p{font-size:17px!important;line-height:1.72!important}
-.contact p{font-size:18px!important;line-height:1.72!important}.contact-links a{font-size:16px!important}
-.footer-inner{font-size:14px!important}
-.back{font-size:15px!important}.case-title .lede{font-size:20px!important;line-height:1.72!important}.case-fact .label{font-size:13px!important}.case-fact div{font-size:16px!important;line-height:1.6!important}.case-head p{font-size:18px!important;line-height:1.72!important}
-.arch-caption{font-size:13px!important}.node strong{font-size:16px!important}.node span{font-size:14px!important;line-height:1.6!important}.branch strong{font-size:15px!important}.branch span{font-size:14px!important;line-height:1.6!important}
-.record-row .num{font-size:13px!important}.record-row h3{font-size:22px!important}.record-row p{font-size:18px!important;line-height:1.72!important}.record-row .outcome{font-size:16px!important;line-height:1.65!important}.callout{font-size:17px!important;line-height:1.72!important}.metric-band strong{font-size:32px!important}.metric-band span{font-size:14px!important}.repo-cta a{font-size:15px!important}
 
-/* Justify reading copy, not labels/headings/navigation */
-.hero-copy,
-.proof-row p,
-.section-head p,
-.system-body p,
-.feature-project p,
-.lab-row p,
-.oss-entry p,
-.timeline-row p,
-.depth p,
-.contact p,
-.case-title .lede,
-.case-head p,
-.record-row p,
-.callout{
-  text-align:justify!important;
-  text-justify:inter-word;
-  hyphens:auto;
-}
+/* Evidence */
+.proof-row .label,.proof-row .source{font-size:13px!important}.proof-row strong{font-size:28px!important}.proof-row p{font-size:18px!important;line-height:1.68!important}
+
+/* Section headings */
+.section-no{font-size:14px!important}
+.section-head h2{font-size:clamp(46px,5.1vw,70px)!important;line-height:.98!important;letter-spacing:-.05em!important}
+.section-head p{font-size:18px!important;line-height:1.72!important}
+
+/* Production systems */
+.system-index{font-size:14px!important}.system-name .type{font-size:13px!important}.system-name h3{font-size:30px!important;line-height:1.16!important}.system-body{font-size:18px!important;line-height:1.72!important}.system-body .methods{font-size:15px!important;line-height:1.6!important}.evidence-line strong{font-size:19px!important}.evidence-line span{font-size:14px!important}.row-link{font-size:15px!important}
+
+/* Public systems */
+.feature-project h3{font-size:54px!important;line-height:1!important}.feature-project p{font-size:18px!important;line-height:1.76!important}.feature-project .tech{font-size:15px!important}.benchmark strong{font-size:30px!important}.benchmark span{font-size:14px!important;line-height:1.55!important}.feature-links a{font-size:15px!important}
+.lab-row .status{font-size:13px!important}.lab-row h3{font-size:27px!important;line-height:1.18!important}.lab-row p{font-size:18px!important;line-height:1.72!important}.lab-row .stack{font-size:14px!important;line-height:1.6!important}
+
+/* Open source */
+.oss-entry .repo{font-size:19px!important}.oss-entry .state{font-size:13px!important}.oss-entry h3{font-size:25px!important;line-height:1.34!important}.oss-entry p{font-size:18px!important;line-height:1.68!important}.oss-entry .domain{font-size:14px!important}
+
+/* Career */
+.timeline-row .date{font-size:13px!important}.timeline-row h3{font-size:28px!important;line-height:1.16!important}.timeline-row .role{font-size:17px!important}.timeline-row p{font-size:18px!important;line-height:1.72!important}
+
+/* Engineering surface */
+.depth h3{font-size:22px!important}.depth p{font-size:18px!important;line-height:1.72!important}
+
+/* Contact */
+.contact h2{font-size:clamp(50px,5.8vw,78px)!important;line-height:.98!important;letter-spacing:-.055em!important}.contact p{font-size:18px!important;line-height:1.72!important}.contact-links a{font-size:17px!important}
+.footer-inner{font-size:14px!important}
+
+/* Case studies */
+.back{font-size:15px!important}.case-title h1{font-size:clamp(58px,6.6vw,90px)!important;line-height:.96!important;letter-spacing:-.055em!important}.case-title .lede{font-size:20px!important;line-height:1.72!important}.case-fact .label{font-size:13px!important}.case-fact div{font-size:16px!important;line-height:1.6!important}.case-head h2{font-size:clamp(42px,4.7vw,64px)!important;line-height:1!important}.case-head p{font-size:18px!important;line-height:1.72!important}
+.arch-caption{font-size:13px!important}.node strong{font-size:17px!important}.node span{font-size:14px!important;line-height:1.6!important}.branch strong{font-size:16px!important}.branch span{font-size:14px!important;line-height:1.6!important}
+.record-row .num{font-size:13px!important}.record-row h3{font-size:25px!important;line-height:1.25!important}.record-row p{font-size:18px!important;line-height:1.72!important}.record-row .outcome{font-size:16px!important;line-height:1.65!important}.callout{font-size:17px!important;line-height:1.72!important}.metric-band strong{font-size:34px!important}.metric-band span{font-size:14px!important}.repo-cta a{font-size:15px!important}
 
 @media(max-width:720px){
   body{font-size:17px!important}
-  .identity strong{font-size:19px!important}
+  .identity strong{font-size:20px!important}
+  .hero h1{font-size:clamp(48px,14vw,70px)!important}
   .hero-copy{font-size:20px!important}
+  .section-head h2{font-size:clamp(38px,11vw,54px)!important}
   .section-head p,.system-body,.feature-project p,.lab-row p,.oss-entry p,.timeline-row p,.depth p,.contact p,.case-head p,.record-row p{font-size:17px!important}
   .meta-row dd,.timeline-row .role{font-size:16px!important}
-  .system-name h3{font-size:24px!important}.lab-row h3{font-size:22px!important}.oss-entry h3,.record-row h3{font-size:20px!important}
+  .system-name h3{font-size:26px!important}.feature-project h3{font-size:42px!important}.lab-row h3{font-size:24px!important}.oss-entry h3,.record-row h3{font-size:22px!important}.timeline-row h3{font-size:25px!important}.depth h3{font-size:20px!important}
+  .contact h2{font-size:clamp(42px,12vw,60px)!important}
+  .case-title h1{font-size:clamp(48px,14vw,68px)!important}.case-head h2{font-size:clamp(36px,11vw,50px)!important}
 }
