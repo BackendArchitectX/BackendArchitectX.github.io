@@ -1,0 +1,55 @@
+/* Full-line justification override */
+body * {
+  text-align: justify !important;
+  text-align-last: justify !important;
+  text-justify: inter-word !important;
+}
+
+p, dd, dt, li, h1, h2, h3, h4, h5, h6,
+.hero-copy,
+.section-head p,
+.system-body,
+.system-body p,
+.system-body .methods,
+.feature-project p,
+.feature-project .tech,
+.lab-row p,
+.lab-row .stack,
+.oss-entry p,
+.oss-entry .domain,
+.timeline-row p,
+.timeline-row .role,
+.depth p,
+.contact p,
+.case-title .lede,
+.case-head p,
+.case-fact div,
+.node span,
+.branch span,
+.record-row p,
+.record-row .outcome,
+.callout,
+.overline,
+.section-no,
+.meta-row dd {
+  width: 100%;
+  text-align: justify !important;
+  text-align-last: justify !important;
+  text-justify: inter-word !important;
+  hyphens: auto;
+}
+
+/* Remove implementation-detail footer copy requested by owner. */
+.footer-inner > span:last-child {
+  display: none !important;
+}
+.footer-inner {
+  justify-content: flex-start !important;
+}
+
+@media (max-width: 720px) {
+  body * {
+    text-align: justify !important;
+    text-align-last: justify !important;
+  }
+}
