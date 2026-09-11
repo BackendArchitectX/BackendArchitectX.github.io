@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zh') {
-      url.searchParams.set('v', '20260911zh');
+    if (url.searchParams.get('v') !== '20260911zi') {
+      url.searchParams.set('v', '20260911zi');
       link.href = url.toString();
     }
   });
@@ -30,7 +30,7 @@
     /* PRIMARY / ALSO only. NOW and BEFORE remain untouched. */
     .hero-side .skill-lines {
       display: grid;
-      gap: 5px;
+      gap: 8px;
       width: 100%;
     }
 
@@ -47,35 +47,36 @@
       justify-content: space-between;
     }
 
-    /* Second line is intentionally natural-width; do not force its last item to Contact. */
+    /* Second line stays natural-width and is not forced to the Contact edge. */
     .hero-side .skill-line--natural {
       justify-content: flex-start;
     }
 
-    .hero-side .skill-line span {
-      display: inline-block;
+    .hero-side .skill-chunk {
+      display: inline-flex;
+      align-items: baseline;
       flex: 0 0 auto;
+    }
+
+    .hero-side .skill-item {
+      display: inline-block;
       font-weight: 700;
       text-align: left;
       letter-spacing: -0.012em;
       color: #000 !important;
     }
 
-    /* One separator treatment everywhere so every dot has the same size, weight and baseline. */
-    .hero-side .skill-line span:not(:last-child)::after {
-      content: "·";
+    /* Real separator elements keep every dot on the same baseline and spacing rule. */
+    .hero-side .skill-sep {
       display: inline-block;
-      margin-left: 6px;
+      flex: 0 0 auto;
+      margin: 0 8px;
       font-size: .72em;
       line-height: 1;
       font-weight: 600;
       color: #000 !important;
       opacity: .58;
-      vertical-align: .08em;
-    }
-
-    .hero-side .skill-line--natural span:not(:last-child) {
-      margin-right: 12px;
+      transform: translateY(-0.03em);
     }
 
     .hero-side .quick-links {
@@ -100,7 +101,7 @@
 
     @media (max-width: 700px) {
       .hero-side .skill-lines {
-        gap: 3px;
+        gap: 4px;
       }
 
       .hero-side .skill-line,
@@ -109,17 +110,11 @@
         justify-content: flex-start;
         flex-wrap: wrap;
         white-space: normal;
-        row-gap: 2px;
+        row-gap: 3px;
       }
 
-      .hero-side .skill-line span:not(:last-child) {
-        margin-right: 10px;
-      }
-
-      .hero-side .skill-line span:not(:last-child)::after {
-        margin-left: 5px;
-        font-size: .72em;
-        vertical-align: .08em;
+      .hero-side .skill-sep {
+        margin: 0 7px;
       }
 
       .hero-side .quick-links {
@@ -148,7 +143,23 @@
     const setSkillRow = (row, lines) => {
       const dd = row.querySelector('dd');
       if (!dd) return;
-      dd.innerHTML = `<div class="skill-lines">${lines.map((line, index) => `<div class="skill-line ${index === 0 ? 'skill-line--full' : 'skill-line--natural'}">${line.map(skill => `<span>${skill}</span>`).join('')}</div>`).join('')}</div>`;
+
+      const renderLine = (line, isFull) => `
+        <div class="skill-line ${isFull ? 'skill-line--full' : 'skill-line--natural'}">
+          ${line.map((skill, index) => `
+            <span class="skill-chunk">
+              <span class="skill-item">${skill}</span>
+              ${index < line.length - 1 ? '<span class="skill-sep" aria-hidden="true">·</span>' : ''}
+            </span>
+          `).join('')}
+        </div>
+      `;
+
+      dd.innerHTML = `
+        <div class="skill-lines">
+          ${lines.map((line, index) => renderLine(line, index === 0)).join('')}
+        </div>
+      `;
     };
 
     setSkillRow(profileRows[2], [
