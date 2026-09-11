@@ -1,6 +1,6 @@
 @import url("/foundation.css?v=20260911h");
 
-/* Final portfolio layer: readable scale, disciplined justification and progressive responsiveness. */
+/* Final portfolio layer: readable scale, disciplined spacing and progressive responsiveness. */
 body{font-size:18px}
 .hero h1{max-width:940px;font-size:clamp(58px,6.15vw,90px);line-height:.96}
 .hero-copy{font-size:20px;line-height:1.72}
@@ -16,28 +16,23 @@ body{font-size:18px}
 .identity span{font-size:20px;line-height:1.3}
 .nav a,.header-actions a{font-size:18px}
 
-/* Never stretch headings, labels or narrow side-copy. */
+/* Keep long-form copy readable without stretching compact profile content. */
 .hero-copy,.proof-row p,.section-head>p,.system-body>p,.feature-project p,.lab-row>p,.oss-entry p,.timeline-row>p,.depth p,.contact p,.case-title .lede,.case-head>p,.record-row p,.callout{text-align:left;text-align-last:auto;hyphens:none}
 @media(min-width:901px){
   .hero-copy,.proof-row p,.system-body>p,.feature-project p,.lab-row>p,.oss-entry p,.timeline-row>p,.record-row p,.callout{text-align:justify;text-align-last:left;text-justify:inter-word;hyphens:auto}
 }
 
-/* Hero profile ledger: aligned on desktop, fluid on smaller screens. */
-.hero-grid{grid-template-columns:minmax(0,1fr) minmax(470px,520px);gap:clamp(54px,5vw,78px)}
-.hero-side{width:100%;max-width:520px;justify-self:end;border-top:1px solid var(--ink)}
+/* Hero profile ledger: clean left alignment and consistent content column. */
+.hero-grid{grid-template-columns:minmax(0,1fr) minmax(500px,540px);gap:clamp(54px,5vw,78px)}
+.hero-side{width:100%;max-width:540px;justify-self:end;border-top:1px solid var(--ink)}
 .hero-side dl{margin:0}
-.meta-row{grid-template-columns:96px minmax(0,1fr);gap:28px;align-items:start;padding:21px 0}
+.meta-row{grid-template-columns:110px minmax(0,1fr);gap:28px;align-items:start;padding:22px 0}
 .meta-row dt{padding-top:3px;line-height:1.45;white-space:nowrap}
-.meta-row dd{font-size:16px;line-height:1.56;letter-spacing:-.006em;text-align:left;text-align-last:auto;text-wrap:pretty;overflow-wrap:normal;hyphens:none}
-.meta-row dd strong{display:block;margin-bottom:2px;line-height:1.45}
+.meta-row dd{margin:0;font-size:17px;line-height:1.58;letter-spacing:0;text-align:left!important;text-align-last:auto!important;text-wrap:pretty;overflow-wrap:normal;hyphens:none;word-spacing:normal}
+.meta-row dd strong{display:block;margin-bottom:2px;line-height:1.45;text-align:left!important;text-align-last:auto!important;word-spacing:normal;letter-spacing:0}
 .meta-row:nth-child(2) dd strong{white-space:nowrap}
+.meta-row:nth-child(n+3) dd strong{line-height:1.6}
 .meta-row dd strong+br{display:none}
-
-/* Keep the profile ledger visually square on the right edge without shifting headings. */
-.meta-row:nth-child(-n+2) dd{text-align:justify;text-align-last:justify;text-justify:inter-word}
-.meta-row:nth-child(-n+2) dd strong{text-align:left;text-align-last:auto}
-.meta-row:nth-child(n+3) dd strong{text-align:justify;text-align-last:justify;text-justify:inter-word;width:100%}
-
 .quick-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:12px 26px;padding-top:20px}
 .quick-links a{font-size:14px;white-space:nowrap}
 
@@ -54,7 +49,7 @@ body{font-size:18px}
   .hero-grid{grid-template-columns:1fr;gap:46px}
   .hero-side{max-width:none;justify-self:stretch}
   .hero-side dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-  .meta-row{grid-template-columns:86px minmax(0,1fr);gap:22px;padding:20px 0}
+  .meta-row{grid-template-columns:90px minmax(0,1fr);gap:22px;padding:20px 0}
   .meta-row:nth-child(odd){padding-right:28px;border-right:1px solid var(--line)}
   .meta-row:nth-child(even){padding-left:28px}
   .meta-row:nth-child(2) dd strong{white-space:normal}
@@ -94,8 +89,8 @@ body{font-size:18px}
   .meta-row{display:block;padding:18px 0 20px;border-bottom:1px solid var(--line)}
   .meta-row:nth-child(odd),.meta-row:nth-child(even){padding-left:0;padding-right:0;border-right:0}
   .meta-row dt{padding:0 0 7px;font-size:11px;line-height:1.3;letter-spacing:.1em}
-  .meta-row dd{margin:0;font-size:16px;line-height:1.58;text-align:left;text-align-last:auto;text-wrap:pretty}
-  .meta-row dd strong{display:block;margin:0 0 3px;font-size:17px;line-height:1.4;white-space:normal;text-align:left;text-align-last:auto}
+  .meta-row dd{margin:0;font-size:16px;line-height:1.58;text-align:left!important;text-align-last:auto!important;text-wrap:pretty}
+  .meta-row dd strong{display:block;margin:0 0 3px;font-size:17px;line-height:1.4;white-space:normal;text-align:left!important;text-align-last:auto!important}
   .quick-links{display:flex;width:100%;max-width:none;justify-content:flex-start;gap:12px 24px;padding-top:18px}
   .quick-links a{font-size:14px}
 }
