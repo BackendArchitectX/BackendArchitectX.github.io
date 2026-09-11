@@ -95,24 +95,9 @@
     revealTargets.forEach(node => observer.observe(node));
   }
 
-  const topButton = document.createElement('button');
-  topButton.className = 'back-to-top';
-  topButton.type = 'button';
-  topButton.setAttribute('aria-label', 'Back to top');
-  topButton.textContent = '↑';
-  document.body.appendChild(topButton);
-
-  const updateTopButton = () => {
-    topButton.classList.toggle('is-visible', window.scrollY > Math.max(700, window.innerHeight));
-  };
-  topButton.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-  });
-
   const onScroll = () => {
     updateProgress();
     updateActiveNav();
-    updateTopButton();
   };
 
   onScroll();
