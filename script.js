@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zo') {
-      url.searchParams.set('v', '20260911zo');
+    if (url.searchParams.get('v') !== '20260911zp') {
+      url.searchParams.set('v', '20260911zp');
       link.href = url.toString();
     }
   });
@@ -42,9 +42,22 @@
         word-spacing: normal !important;
       }
 
-      /* Public systems supporting copy follows the same left/right measure without stretching its last line. */
-      #systems .section-head > p {
+      /* Engineering heading is a single line, so justify its last line as well. */
+      #engineering .section-head h2 {
         width: 100% !important;
+        max-width: 1260px !important;
+        text-align: justify !important;
+        text-align-last: justify !important;
+        text-justify: inter-word !important;
+        hyphens: none !important;
+        word-spacing: normal !important;
+      }
+
+      /* Supporting copy uses the same measure; only complete lines are justified. */
+      #systems .section-head > p,
+      #engineering .section-head > p {
+        width: 100% !important;
+        max-width: 1260px !important;
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
