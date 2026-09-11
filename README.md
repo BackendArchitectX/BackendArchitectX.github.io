@@ -17,10 +17,14 @@ The site intentionally separates production work, public projects and upstream c
 
 ```text
 index.html          Home / engineering record
-styles.css          Shared responsive design system
-script.js           Navigation and scroll-state enhancements
+styles.css          Final responsive portfolio layer
+foundation.css      Shared base styles for home and case studies
+script.js           Progressive navigation and scroll-state enhancements
 work/               Production case studies
 lab/                Public-system case studies
+404.html            Custom not-found route
+robots.txt          Crawler rules
+sitemap.xml         Search-engine sitemap
 ```
 
 ## Run locally
