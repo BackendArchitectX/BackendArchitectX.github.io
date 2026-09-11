@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zq') {
-      url.searchParams.set('v', '20260911zq');
+    if (url.searchParams.get('v') !== '20260911zr') {
+      url.searchParams.set('v', '20260911zr');
       link.href = url.toString();
     }
   });
@@ -43,22 +43,36 @@
         word-spacing: normal !important;
       }
 
-      /* Engineering heading is a single line, so justify its last line as well. */
+      /* Engineering is a short single-line heading: use a controlled measure instead of stretching word spaces. */
       #engineering .section-head h2 {
+        width: 100% !important;
+        max-width: 1180px !important;
+        font-size: clamp(52px, 4.25vw, 64px) !important;
+        line-height: 1.035 !important;
+        letter-spacing: -0.045em !important;
+        text-align: left !important;
+        text-align-last: auto !important;
+        text-justify: auto !important;
+        text-wrap: balance !important;
+        hyphens: none !important;
+        word-spacing: normal !important;
+      }
+
+      /* Public-systems supporting copy can use the full editorial measure. */
+      #systems .section-head > p {
         width: 100% !important;
         max-width: 1260px !important;
         text-align: justify !important;
-        text-align-last: justify !important;
+        text-align-last: left !important;
         text-justify: inter-word !important;
         hyphens: none !important;
         word-spacing: normal !important;
       }
 
-      /* Supporting copy uses the same measure; only complete lines are justified. */
-      #systems .section-head > p,
+      /* Engineering supporting copy is narrower so justification remains subtle rather than visibly stretched. */
       #engineering .section-head > p {
         width: 100% !important;
-        max-width: 1260px !important;
+        max-width: 1080px !important;
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
