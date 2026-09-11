@@ -1,5 +1,20 @@
 @import url("/mobile-natural-justify.css?v=20260911c");
 
+/* Mobile proof copy: use natural justification with a ragged final line. */
+@media (max-width: 820px) {
+  .proof-row p {
+    text-align: justify !important;
+    text-align-last: left !important;
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    word-spacing: normal !important;
+    letter-spacing: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+}
+
 /* Mobile skill ledger: fully use the first row without stretching the second row. */
 @media (max-width: 700px) {
   .hero-side .skill-line--full {
