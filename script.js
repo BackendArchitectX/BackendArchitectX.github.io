@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zb') {
-      url.searchParams.set('v', '20260911zb');
+    if (url.searchParams.get('v') !== '20260911zc') {
+      url.searchParams.set('v', '20260911zc');
       link.href = url.toString();
     }
   });
@@ -26,7 +26,7 @@
       }
     }
 
-    /* PRIMARY / ALSO: natural editorial spacing. Do not touch NOW / BEFORE. */
+    /* PRIMARY / ALSO only. NOW and BEFORE remain untouched. */
     .hero-side .skill-lines {
       display: grid;
       gap: 4px;
@@ -36,9 +36,9 @@
     .hero-side .skill-line {
       display: flex;
       align-items: baseline;
-      justify-content: flex-start;
-      flex-wrap: nowrap;
+      justify-content: space-between;
       width: 100%;
+      min-width: 0;
       white-space: nowrap;
     }
 
@@ -50,12 +50,16 @@
       letter-spacing: -0.012em;
     }
 
-    .hero-side .skill-line span + span::before {
-      content: "·";
-      display: inline-block;
-      margin: 0 10px;
+    .hero-side .skill-line span:not(:last-child)::after {
+      content: " ·";
+      margin-left: 3px;
       font-weight: 500;
       opacity: .62;
+    }
+
+    /* The final skill on every line shares the exact right edge with Contact. */
+    .hero-side .skill-line span:last-child {
+      text-align: right;
     }
 
     .hero-side .quick-links {
@@ -84,13 +88,19 @@
       }
 
       .hero-side .skill-line {
+        justify-content: flex-start;
         flex-wrap: wrap;
         white-space: normal;
+        gap: 0 8px;
         row-gap: 2px;
       }
 
-      .hero-side .skill-line span + span::before {
-        margin: 0 8px;
+      .hero-side .skill-line span:last-child {
+        text-align: left;
+      }
+
+      .hero-side .skill-line span:not(:last-child)::after {
+        margin-left: 3px;
       }
 
       .hero-side .quick-links {
