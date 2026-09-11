@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911ze') {
-      url.searchParams.set('v', '20260911ze');
+    if (url.searchParams.get('v') !== '20260911zf') {
+      url.searchParams.set('v', '20260911zf');
       link.href = url.toString();
     }
   });
@@ -59,13 +59,15 @@
       font-weight: 700;
       text-align: left;
       letter-spacing: -0.012em;
+      color: #000 !important;
     }
 
     .hero-side .skill-line--full span:not(:last-child)::after {
       content: " ·";
       margin-left: 3px;
       font-weight: 500;
-      opacity: .62;
+      color: #000 !important;
+      opacity: .45;
     }
 
     .hero-side .skill-line--natural span + span::before {
@@ -73,7 +75,8 @@
       display: inline-block;
       margin: 0 11px;
       font-weight: 500;
-      opacity: .62;
+      color: #000 !important;
+      opacity: .45;
     }
 
     .hero-side .quick-links {
@@ -116,7 +119,8 @@
         display: inline-block;
         margin: 0 8px;
         font-weight: 500;
-        opacity: .62;
+        color: #000 !important;
+        opacity: .45;
       }
 
       .hero-side .skill-line--full span:not(:last-child)::after {
