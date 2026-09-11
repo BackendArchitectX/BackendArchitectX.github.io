@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911u') {
-      url.searchParams.set('v', '20260911u');
+    if (url.searchParams.get('v') !== '20260911v') {
+      url.searchParams.set('v', '20260911v');
       link.href = url.toString();
     }
   });
@@ -23,6 +23,18 @@
         text-justify: inter-word !important;
         hyphens: auto !important;
         word-spacing: normal !important;
+      }
+    }
+
+    .footer-inner > span {
+      font-size: 22px !important;
+      font-weight: 650 !important;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 700px) {
+      .footer-inner > span {
+        font-size: 19px !important;
       }
     }
   `;
