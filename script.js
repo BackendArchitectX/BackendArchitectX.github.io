@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zd') {
-      url.searchParams.set('v', '20260911zd');
+    if (url.searchParams.get('v') !== '20260911ze') {
+      url.searchParams.set('v', '20260911ze');
       link.href = url.toString();
     }
   });
@@ -17,7 +17,8 @@
       .system-body > p,
       .feature-project p,
       .lab-row > p,
-      .oss-entry p {
+      .oss-entry p,
+      .case-title .lede {
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
