@@ -3,11 +3,25 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911o') {
-      url.searchParams.set('v', '20260911o');
+    if (url.searchParams.get('v') !== '20260911p') {
+      url.searchParams.set('v', '20260911p');
       link.href = url.toString();
     }
   });
+
+  const heroTypography = document.createElement('style');
+  heroTypography.textContent = `
+    @media (min-width: 901px) {
+      .hero-copy {
+        text-align: justify !important;
+        text-align-last: left !important;
+        text-justify: inter-word !important;
+        hyphens: auto !important;
+        word-spacing: normal !important;
+      }
+    }
+  `;
+  document.head.appendChild(heroTypography);
 
   const progress = document.createElement('div');
   progress.className = 'scroll-progress';
