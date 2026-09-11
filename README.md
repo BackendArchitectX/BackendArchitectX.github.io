@@ -1,18 +1,38 @@
-# Pranay Kadu — Portfolio
+# Pranay Kadu — Engineering Portfolio
 
-Static portfolio built for free hosting on GitHub Pages.
+Source-first engineering portfolio for my backend, distributed-systems and production work.
+
+Live site: https://backendarchitectx.github.io/
+
+## What is included
+
+- Production case studies: fraud screening, financial transaction workflows and external-data integration
+- Public systems work: Vortex CUDA, distributed transactions, Java AI tooling and selected learning projects
+- Upstream contributions to AutoMQ, Apache Fluss and Trino
+- Career record and engineering surface
+
+The site intentionally separates production work, public projects and upstream contributions so they are not presented as equivalent evidence.
+
+## Structure
+
+```text
+index.html          Home / engineering record
+styles.css          Shared responsive design system
+script.js           Navigation and scroll-state enhancements
+work/               Production case studies
+lab/                Public-system case studies
+```
 
 ## Run locally
 
-Open `index.html` directly, or serve the folder with any static server.
+No build step is required. Serve the repository root with any static server, for example:
 
-## Deploy on GitHub Pages
+```bash
+python -m http.server 8000
+```
 
-1. Create a public repository such as `portfolio`.
-2. Upload the contents of this folder to the repository root.
-3. In GitHub, open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select `main` and `/ (root)`.
-6. Save. GitHub will publish the site on a `github.io` URL.
+Then open `http://localhost:8000`.
 
-No framework, package manager, build step, external font, analytics script, or paid dependency is required.
+## Deployment
+
+The site is deployed with GitHub Pages from the `main` branch and repository root.
