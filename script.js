@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zr') {
-      url.searchParams.set('v', '20260911zr');
+    if (url.searchParams.get('v') !== '20260911zs') {
+      url.searchParams.set('v', '20260911zs');
       link.href = url.toString();
     }
   });
@@ -43,17 +43,18 @@
         word-spacing: normal !important;
       }
 
-      /* Engineering is a short single-line heading: use a controlled measure instead of stretching word spaces. */
+      /* Short engineering headline: never stretch a single line to fake justification. */
       #engineering .section-head h2 {
         width: 100% !important;
-        max-width: 1180px !important;
-        font-size: clamp(52px, 4.25vw, 64px) !important;
-        line-height: 1.035 !important;
+        max-width: 1000px !important;
+        font-size: clamp(50px, 4vw, 62px) !important;
+        line-height: 1.02 !important;
         letter-spacing: -0.045em !important;
         text-align: left !important;
         text-align-last: auto !important;
         text-justify: auto !important;
         text-wrap: balance !important;
+        white-space: normal !important;
         hyphens: none !important;
         word-spacing: normal !important;
       }
@@ -69,13 +70,16 @@
         word-spacing: normal !important;
       }
 
-      /* Engineering supporting copy is narrower so justification remains subtle rather than visibly stretched. */
+      /* Engineering supporting copy uses a shorter line so justification stays subtle. */
       #engineering .section-head > p {
         width: 100% !important;
-        max-width: 1080px !important;
+        max-width: 920px !important;
+        font-size: 18px !important;
+        line-height: 1.62 !important;
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
+        text-wrap: pretty !important;
         hyphens: none !important;
         word-spacing: normal !important;
       }
