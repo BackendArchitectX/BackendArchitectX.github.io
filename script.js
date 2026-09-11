@@ -1,12 +1,4 @@
 (() => {
-  document.documentElement.classList.add('js');
-
-  const footerMeta = document.querySelector('.footer-inner > span:last-child');
-  if (footerMeta && footerMeta.textContent.includes('Static site')) footerMeta.remove();
-
-  const year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
-
   const progress = document.createElement('div');
   progress.className = 'scroll-progress';
   progress.setAttribute('aria-hidden', 'true');
@@ -20,30 +12,29 @@
 
   const headerInner = document.querySelector('.header-inner');
   const nav = document.querySelector('.nav');
-  let menuButton = null;
 
   if (headerInner && nav) {
-    menuButton = document.createElement('button');
-    menuButton.className = 'menu-toggle';
-    menuButton.type = 'button';
-    menuButton.setAttribute('aria-expanded', 'false');
-    menuButton.setAttribute('aria-controls', 'primary-nav');
-    menuButton.textContent = 'Menu';
+    const button = document.createElement('button');
+    button.className = 'menu-toggle';
+    button.type = 'button';
+    button.textContent = 'Menu';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', 'primary-nav');
     nav.id = nav.id || 'primary-nav';
 
     const headerActions = headerInner.querySelector('.header-actions');
-    headerInner.insertBefore(menuButton, headerActions || null);
+    headerInner.insertBefore(button, headerActions || null);
 
     const closeMenu = () => {
       nav.classList.remove('nav-open');
-      menuButton.setAttribute('aria-expanded', 'false');
-      menuButton.textContent = 'Menu';
+      button.setAttribute('aria-expanded', 'false');
+      button.textContent = 'Menu';
     };
 
-    menuButton.addEventListener('click', () => {
+    button.addEventListener('click', () => {
       const open = nav.classList.toggle('nav-open');
-      menuButton.setAttribute('aria-expanded', String(open));
-      menuButton.textContent = open ? 'Close' : 'Menu';
+      button.setAttribute('aria-expanded', String(open));
+      button.textContent = open ? 'Close' : 'Menu';
     });
 
     nav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
@@ -62,11 +53,13 @@
 
   const updateActiveNav = () => {
     if (!sections.length) return;
-    const marker = window.scrollY + Math.min(220, window.innerHeight * .28);
+    const marker = window.scrollY + Math.min(220, window.innerHeight * 0.28);
     let active = sections[0];
+
     sections.forEach(section => {
       if (section.offsetTop <= marker) active = section;
     });
+
     navLinks.forEach(link => {
       const isActive = link.getAttribute('href') === `#${active.id}`;
       link.classList.toggle('is-active', isActive);
@@ -74,26 +67,6 @@
       else link.removeAttribute('aria-current');
     });
   };
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const revealTargets = document.querySelectorAll(
-    '.section-head, .proof-row, .system-row, .feature-project, .lab-row, .oss-entry, .timeline-row, .depth, .contact-grid, .record-row'
-  );
-  revealTargets.forEach(node => node.classList.add('reveal-target'));
-
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    revealTargets.forEach(node => node.classList.add('in-view'));
-  } else {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: '0px 0px -7% 0px', threshold: 0.06 });
-    revealTargets.forEach(node => observer.observe(node));
-  }
 
   const onScroll = () => {
     updateProgress();
