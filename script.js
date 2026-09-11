@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zj') {
-      url.searchParams.set('v', '20260911zj');
+    if (url.searchParams.get('v') !== '20260911zk') {
+      url.searchParams.set('v', '20260911zk');
       link.href = url.toString();
     }
   });
@@ -23,6 +23,15 @@
         text-align-last: left !important;
         text-justify: inter-word !important;
         hyphens: auto !important;
+        word-spacing: normal !important;
+      }
+
+      /* Production heading: justify wrapped lines, keep the final line natural. */
+      #production .section-head h2 {
+        text-align: justify !important;
+        text-align-last: left !important;
+        text-justify: inter-word !important;
+        hyphens: none !important;
         word-spacing: normal !important;
       }
     }
