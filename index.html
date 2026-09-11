@@ -12,8 +12,9 @@
   <meta property="og:url" content="https://backendarchitectx.github.io/">
   <meta name="twitter:card" content="summary">
   <link rel="canonical" href="https://backendarchitectx.github.io/">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Pranay Kadu","jobTitle":"Backend Software Engineer","url":"https://backendarchitectx.github.io/","sameAs":["https://github.com/BackendArchitectX"],"knowsAbout":["Java","Spring Boot","Distributed systems","Backend engineering","Performance engineering","Production reliability"]}</script>
   <title>Pranay Kadu — Backend Software Engineer</title>
-  <link rel="stylesheet" href="styles.css?v=20260911g">
+  <link rel="stylesheet" href="styles.css?v=20260911h">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -30,7 +31,7 @@
     <div class="hero-grid">
       <div>
         <div class="overline">Java backend · distributed systems · production engineering</div>
-        <h1>I work on the parts of backend systems where <em>correctness, latency and failure behavior become visible.</em></h1>
+        <h1>I build backend systems that stay <em>correct under load and failure.</em></h1>
         <p class="hero-copy">Software Engineer with 4+ years across fraud screening, financial workflows and integration systems. I build services, tune hot paths, reason about transaction boundaries, and stay close enough to production to understand how the system actually fails.</p>
       </div>
       <aside class="hero-side" aria-label="Engineering profile summary">
@@ -56,15 +57,15 @@
     <div class="shell">
       <div class="section-head">
         <div class="section-no">01 / Production systems</div>
-        <h2>Work I would spend interview time on.</h2>
-        <p>Three systems from my professional experience. Details are intentionally generalized where the original implementation is proprietary.</p>
+        <h2>Production systems where correctness and failure handling were part of the feature.</h2>
+        <p>Three systems from professional work, with proprietary implementation details intentionally generalized.</p>
       </div>
       <div class="system-list">
         <a class="system-row" href="work/fraud-screening.html">
           <div class="system-index">01</div>
           <div class="system-name"><span class="type">Fraud screening</span><h3>Decisioning under retries, bursts and dependency failure</h3></div>
           <div class="system-body"><p>Stateless Java/Spring Boot service with idempotent APIs, Redis risk lookups and velocity counters, token-bucket rate limiting, async processing, circuit breakers, fallbacks and external risk-provider integrations.</p><div class="methods">Idempotency · Redis · rate limiting · async · circuit breakers · observability</div></div>
-          <div class="system-evidence"><div class="evidence-line"><strong>99.8%</strong><span>uptime</span></div><div class="evidence-line"><strong>35 → 12</strong><span>MTTR min</span></div><span class="row-link">Case study ↗</span></div>
+          <div class="system-evidence"><div class="evidence-line"><strong>Millions/day</strong><span>transaction evaluations</span></div><div class="evidence-line"><strong>99.8%</strong><span>uptime</span></div><div class="evidence-line"><strong>35 → 12</strong><span>MTTR min</span></div><span class="row-link">Case study ↗</span></div>
         </a>
         <a class="system-row" href="work/financial-workflow.html">
           <div class="system-index">02</div>
@@ -86,8 +87,8 @@
     <div class="shell">
       <div class="section-head">
         <div class="section-no">02 / Public systems</div>
-        <h2>Projects built to go below framework-level application code.</h2>
-        <p>Public artifacts matter because a reviewer can inspect the implementation, constraints, tests and documentation directly.</p>
+        <h2>Public systems with inspectable code, tests and engineering constraints.</h2>
+        <p>Each entry points to code a reviewer can inspect. Vortex is the flagship systems project; the remaining repositories show distributed-systems, Java, AI-tooling and MLOps breadth.</p>
       </div>
 
       <article class="feature-project">
@@ -108,8 +109,8 @@
 
       <div class="lab-ledger">
         <a class="lab-row" href="lab/distrib-txn-db.html"><span class="status">01</span><h3>distrib-txn-db</h3><p>Java workshop implementation progressing through HLC, MVCC, distributed routing, transaction records, write intents, clock-uncertainty read restart and simplified serializable conflict prevention.</p><span class="stack">Java · HLC · MVCC · transactions</span></a>
-        <a class="lab-row" href="lab/aegis.html"><span class="status">02</span><h3>Aegis Insurance Decisioning</h3><p>Java + Angular decisioning system for policy, claims, premium, risk and audit workflows. The public version explicitly uses an in-memory store to keep local review simple.</p><span class="stack">Java 17 · Spring Boot · Angular</span></a>
-        <a class="lab-row" href="https://github.com/BackendArchitectX/SpringMind-AI" target="_blank" rel="noreferrer"><span class="status">03</span><h3>SpringMind-AI</h3><p>Terminal-first Java coding assistant with an LLM tool loop for file reads/writes, shell execution and iterative task completion.</p><span class="stack">Java 21 · Maven · LLM tools</span></a>
+        <a class="lab-row" href="https://github.com/BackendArchitectX/SpringMind-AI" target="_blank" rel="noreferrer"><span class="status">02</span><h3>SpringMind-AI</h3><p>Terminal-first Java coding assistant with an LLM tool loop for file reads/writes, shell execution and iterative task completion.</p><span class="stack">Java 21 · Maven · LLM tools</span></a>
+        <a class="lab-row" href="lab/aegis.html"><span class="status">03</span><h3>Aegis Insurance Decisioning</h3><p>Java + Angular decisioning system for policy, claims, premium, risk and audit workflows. The public version explicitly uses an in-memory store to keep local review simple.</p><span class="stack">Java 17 · Spring Boot · Angular</span></a>
         <a class="lab-row" href="https://github.com/BackendArchitectX/JobAgent-AI" target="_blank" rel="noreferrer"><span class="status">04</span><h3>JobAgent-AI</h3><p>Public fork of MadsLorentzen/ai-job-search, used to explore agent-assisted job evaluation, document tailoring and interview workflows.</p><span class="stack">Fork · agent workflows · Claude Code</span></a>
         <a class="lab-row" href="https://github.com/BackendArchitectX/networksecurity" target="_blank" rel="noreferrer"><span class="status">05</span><h3>networksecurity</h3><p>Learning-oriented end-to-end MLOps project with ETL, MongoDB, MLflow, Docker, GitHub Actions and AWS deployment components.</p><span class="stack">Python · MLOps · AWS · MongoDB</span></a>
       </div>
@@ -120,13 +121,13 @@
     <div class="shell">
       <div class="section-head">
         <div class="section-no">03 / Upstream engineering</div>
-        <h2>Small fixes, difficult failure modes.</h2>
-        <p>The signal here is not diff size. It is whether the failure mode is real, the fix belongs at the right boundary, and the regression test proves it.</p>
+        <h2>Upstream fixes at failure boundaries.</h2>
+        <p>The signal is not diff size. It is whether the failure mode is real, the fix belongs at the right boundary and the regression test proves it.</p>
       </div>
       <div class="oss-table">
-        <a class="oss-entry" href="https://github.com/AutoMQ/automq/pull/3493" target="_blank" rel="noreferrer"><span class="repo">AutoMQ</span><span class="state">Merged</span><div><h3>Skip AutoBalancer metrics reporter on controller-only nodes</h3><p>Process-role handling prevented broker listener resolution and reporter startup where the broker role was absent, with regression coverage across role combinations.</p></div><span class="domain">runtime / roles</span></a>
-        <a class="oss-entry" href="https://github.com/apache/fluss/pull/4263" target="_blank" rel="noreferrer"><span class="repo">Apache Fluss</span><span class="state">In review</span><div><h3>Make cached RPC connections endpoint-aware</h3><p>Connection identity moved from logical UID alone to UID + host + port so metadata endpoint changes cannot silently keep routing through a stale physical connection.</p></div><span class="domain">RPC / lifecycle</span></a>
-        <a class="oss-entry" href="https://github.com/trinodb/trino/pull/30973" target="_blank" rel="noreferrer"><span class="repo">Trino</span><span class="state">In review</span><div><h3>Prevent query failure after transaction commit starts</h3><p>Coordinates commit and failure ownership so unrelated failures cannot override the outcome after an autocommit transaction begins committing.</p></div><span class="domain">transactions / race</span></a>
+        <a class="oss-entry" href="https://github.com/AutoMQ/automq/pull/3493" target="_blank" rel="noreferrer"><span class="repo">AutoMQ</span><span class="state">#3493 · Merged</span><div><h3>Skip AutoBalancer metrics reporter on controller-only nodes</h3><p>Process-role handling prevented broker listener resolution and reporter startup where the broker role was absent, with regression coverage across role combinations.</p></div><span class="domain">runtime / roles</span></a>
+        <a class="oss-entry" href="https://github.com/apache/fluss/pull/4263" target="_blank" rel="noreferrer"><span class="repo">Apache Fluss</span><span class="state">#4263 · Open</span><div><h3>Make cached RPC connections endpoint-aware</h3><p>Connection identity moved from logical UID alone to UID + host + port so metadata endpoint changes cannot silently keep routing through a stale physical connection.</p></div><span class="domain">RPC / lifecycle</span></a>
+        <a class="oss-entry" href="https://github.com/trinodb/trino/pull/30973" target="_blank" rel="noreferrer"><span class="repo">Trino</span><span class="state">#30973 · Open</span><div><h3>Prevent query failure after transaction commit starts</h3><p>Coordinates commit and failure ownership so unrelated failures cannot override the outcome after an autocommit transaction begins committing.</p></div><span class="domain">transactions / race</span></a>
       </div>
     </div>
   </section>
@@ -135,8 +136,8 @@
     <div class="shell">
       <div class="section-head">
         <div class="section-no">04 / Career record</div>
-        <h2>Production ownership grew with the systems.</h2>
-        <p>Experience and project claims are kept aligned with the resumes used to build this portfolio.</p>
+        <h2>From backend delivery to production ownership.</h2>
+        <p>The progression below focuses on systems shipped, production responsibility and measurable engineering outcomes.</p>
       </div>
       <div class="timeline">
         <div class="timeline-row"><span class="date">APR 2025 — NOW</span><div><h3>Linux Socials</h3><span class="role">Software Engineer</span></div><p>Designed and owned fraud-screening backend services, tuned latency and throughput, hardened dependency behavior, and supported production through observability, incident response, runbooks and RCA.</p></div>
@@ -148,7 +149,7 @@
 
   <section class="section">
     <div class="shell">
-      <div class="section-head"><div class="section-no">05 / Engineering surface</div><h2>Tools are useful only when tied to a failure mode.</h2><p>This is intentionally narrower than a résumé skill cloud. It reflects the areas I would be comfortable defending in a technical interview.</p></div>
+      <div class="section-head"><div class="section-no">05 / Engineering surface</div><h2>Engineering surface I can defend in depth.</h2><p>These are areas I can discuss with concrete examples from production work or public systems.</p></div>
       <div class="depth-grid">
         <div class="depth"><h3>Service design</h3><p>Java · Spring Boot · Spring MVC · REST APIs · JPA/Hibernate · validation · exception handling · service boundaries</p></div>
         <div class="depth"><h3>Data & consistency</h3><p>MySQL · PostgreSQL · Redis · SQL tuning · composite indexes · transaction management · isolation · optimistic locking</p></div>
@@ -168,6 +169,6 @@
 </main>
 
 <footer class="footer"><div class="shell footer-inner"><span>Pranay Kadu</span><a href="#top">Back to top ↑</a></div></footer>
-<script src="script.js?v=20260911g"></script>
+<script src="script.js?v=20260911h"></script>
 </body>
 </html>
