@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zp') {
-      url.searchParams.set('v', '20260911zp');
+    if (url.searchParams.get('v') !== '20260911zq') {
+      url.searchParams.set('v', '20260911zq');
       link.href = url.toString();
     }
   });
@@ -18,7 +18,8 @@
       .feature-project p,
       .lab-row > p,
       .oss-entry p,
-      .case-title .lede {
+      .case-title .lede,
+      #engineering .depth p {
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
