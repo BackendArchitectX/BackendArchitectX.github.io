@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zc') {
-      url.searchParams.set('v', '20260911zc');
+    if (url.searchParams.get('v') !== '20260911zd') {
+      url.searchParams.set('v', '20260911zd');
       link.href = url.toString();
     }
   });
@@ -29,17 +29,27 @@
     /* PRIMARY / ALSO only. NOW and BEFORE remain untouched. */
     .hero-side .skill-lines {
       display: grid;
-      gap: 4px;
+      gap: 5px;
       width: 100%;
     }
 
     .hero-side .skill-line {
       display: flex;
       align-items: baseline;
-      justify-content: space-between;
       width: 100%;
       min-width: 0;
       white-space: nowrap;
+    }
+
+    /* First line uses the full measure and aligns with Contact on the right. */
+    .hero-side .skill-line--full {
+      justify-content: space-between;
+    }
+
+    /* Second line is intentionally natural-width; do not force its last item to Contact. */
+    .hero-side .skill-line--natural {
+      justify-content: flex-start;
+      gap: 0;
     }
 
     .hero-side .skill-line span {
@@ -50,16 +60,19 @@
       letter-spacing: -0.012em;
     }
 
-    .hero-side .skill-line span:not(:last-child)::after {
+    .hero-side .skill-line--full span:not(:last-child)::after {
       content: " ·";
       margin-left: 3px;
       font-weight: 500;
       opacity: .62;
     }
 
-    /* The final skill on every line shares the exact right edge with Contact. */
-    .hero-side .skill-line span:last-child {
-      text-align: right;
+    .hero-side .skill-line--natural span + span::before {
+      content: "·";
+      display: inline-block;
+      margin: 0 11px;
+      font-weight: 500;
+      opacity: .62;
     }
 
     .hero-side .quick-links {
@@ -87,20 +100,26 @@
         gap: 3px;
       }
 
-      .hero-side .skill-line {
+      .hero-side .skill-line,
+      .hero-side .skill-line--full,
+      .hero-side .skill-line--natural {
         justify-content: flex-start;
         flex-wrap: wrap;
         white-space: normal;
-        gap: 0 8px;
         row-gap: 2px;
       }
 
-      .hero-side .skill-line span:last-child {
-        text-align: left;
+      .hero-side .skill-line--full span + span::before,
+      .hero-side .skill-line--natural span + span::before {
+        content: "·";
+        display: inline-block;
+        margin: 0 8px;
+        font-weight: 500;
+        opacity: .62;
       }
 
-      .hero-side .skill-line span:not(:last-child)::after {
-        margin-left: 3px;
+      .hero-side .skill-line--full span:not(:last-child)::after {
+        content: none;
       }
 
       .hero-side .quick-links {
@@ -129,7 +148,7 @@
     const setSkillRow = (row, lines) => {
       const dd = row.querySelector('dd');
       if (!dd) return;
-      dd.innerHTML = `<div class="skill-lines">${lines.map(line => `<div class="skill-line">${line.map(skill => `<span>${skill}</span>`).join('')}</div>`).join('')}</div>`;
+      dd.innerHTML = `<div class="skill-lines">${lines.map((line, index) => `<div class="skill-line ${index === 0 ? 'skill-line--full' : 'skill-line--natural'}">${line.map(skill => `<span>${skill}</span>`).join('')}</div>`).join('')}</div>`;
     };
 
     setSkillRow(profileRows[2], [
