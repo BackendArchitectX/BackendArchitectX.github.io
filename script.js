@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911v') {
-      url.searchParams.set('v', '20260911v');
+    if (url.searchParams.get('v') !== '20260911w') {
+      url.searchParams.set('v', '20260911w');
       link.href = url.toString();
     }
   });
@@ -27,14 +27,15 @@
     }
 
     .footer-inner > span {
-      font-size: 22px !important;
-      font-weight: 650 !important;
-      letter-spacing: -0.02em;
+      font-size: 30px !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
     }
 
     @media (max-width: 700px) {
       .footer-inner > span {
-        font-size: 19px !important;
+        font-size: 24px !important;
       }
     }
   `;
