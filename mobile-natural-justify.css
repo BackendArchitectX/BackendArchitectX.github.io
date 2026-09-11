@@ -1,8 +1,9 @@
 /* Mobile-only natural justification.
-   Long-form copy is justified with a natural final line and browser hyphenation.
-   Compact metrics, metadata, labels and headings remain left aligned. */
+   Full paragraph lines are justified; final lines remain naturally left aligned.
+   Desktop is intentionally untouched. */
 @media (max-width: 820px) {
   .hero-copy,
+  .proof-row p,
   .section-head > p,
   .system-body > p,
   .feature-project p,
@@ -26,8 +27,7 @@
     word-break: normal !important;
   }
 
-  /* Keep narrow/compact content natural rather than stretching it. */
-  .proof-row p,
+  /* Compact labels, headings, metrics and metadata stay naturally aligned. */
   .methods,
   .tech,
   .lab-row .stack,
@@ -55,12 +55,13 @@
   }
 }
 
-/* Very narrow phones get slightly safer wrapping while preserving natural justification. */
 @media (max-width: 380px) {
   .hero-copy,
+  .proof-row p,
   .section-head > p,
   .system-body > p,
   .feature-project p,
+  .lab-row > p,
   .oss-entry p,
   .timeline-row > p,
   .depth p,
