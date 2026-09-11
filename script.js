@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911s') {
-      url.searchParams.set('v', '20260911s');
+    if (url.searchParams.get('v') !== '20260911t') {
+      url.searchParams.set('v', '20260911t');
       link.href = url.toString();
     }
   });
@@ -15,7 +15,8 @@
       .hero-copy,
       .proof-row p,
       .system-body > p,
-      .lab-row > p {
+      .lab-row > p,
+      .oss-entry p {
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
