@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zs') {
-      url.searchParams.set('v', '20260911zs');
+    if (url.searchParams.get('v') !== '20260911zt') {
+      url.searchParams.set('v', '20260911zt');
       link.href = url.toString();
     }
   });
@@ -82,6 +82,131 @@
         text-wrap: pretty !important;
         hyphens: none !important;
         word-spacing: normal !important;
+      }
+    }
+
+    /* Mobile typography must be natural, never mechanically justified. */
+    @media (max-width: 820px) {
+      .hero-copy,
+      .proof-row p,
+      .section-head > p,
+      .system-body > p,
+      .feature-project p,
+      .lab-row > p,
+      .oss-entry p,
+      .timeline-row > p,
+      .depth p,
+      .contact p,
+      .case-title .lede,
+      .case-head > p,
+      .record-row p,
+      .callout {
+        text-align: left !important;
+        text-align-last: auto !important;
+        text-justify: auto !important;
+        hyphens: none !important;
+        word-spacing: normal !important;
+        letter-spacing: normal !important;
+        text-wrap: pretty !important;
+      }
+
+      .hero h1,
+      .section-head h2,
+      .contact h2,
+      .case-title h1,
+      .case-head h2 {
+        max-width: 100% !important;
+        text-align: left !important;
+        text-align-last: auto !important;
+        text-justify: auto !important;
+        hyphens: none !important;
+        word-spacing: normal !important;
+        text-wrap: balance !important;
+      }
+
+      .section {
+        padding: 58px 0 !important;
+      }
+
+      .section-head {
+        row-gap: 10px !important;
+        margin-bottom: 34px !important;
+      }
+
+      .section-head h2 {
+        font-size: clamp(34px, 8.8vw, 44px) !important;
+        line-height: 1.02 !important;
+        letter-spacing: -0.038em !important;
+      }
+
+      .section-head > p {
+        max-width: 100% !important;
+        font-size: 16px !important;
+        line-height: 1.58 !important;
+      }
+
+      .section-no {
+        padding-top: 0 !important;
+        font-size: 10px !important;
+        line-height: 1.45 !important;
+      }
+
+      .contact h2 {
+        font-size: clamp(34px, 9vw, 44px) !important;
+        line-height: 1.02 !important;
+        letter-spacing: -0.04em !important;
+      }
+
+      .system-name h3,
+      .oss-entry h3,
+      .timeline-row h3,
+      .lab-row h3 {
+        text-wrap: pretty !important;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .hero h1 {
+        font-size: clamp(40px, 11vw, 48px) !important;
+        line-height: .99 !important;
+      }
+
+      .section-head h2,
+      .contact h2 {
+        font-size: clamp(32px, 9.6vw, 40px) !important;
+      }
+
+      .hero-copy,
+      .section-head > p,
+      .system-body > p,
+      .feature-project p,
+      .lab-row > p,
+      .oss-entry p,
+      .timeline-row > p,
+      .depth p,
+      .contact p {
+        font-size: 16px !important;
+        line-height: 1.58 !important;
+      }
+
+      .system-name h3,
+      .oss-entry h3,
+      .timeline-row h3,
+      .lab-row h3 {
+        font-size: 20px !important;
+        line-height: 1.22 !important;
+      }
+
+      .depth h3 {
+        font-size: 18px !important;
+      }
+
+      .feature-project h3 {
+        font-size: clamp(34px, 10vw, 42px) !important;
+      }
+
+      .section {
+        padding: 52px 0 !important;
       }
     }
 
