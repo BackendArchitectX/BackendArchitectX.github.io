@@ -1,0 +1,36 @@
+/* Mobile skill ledger: fully use the first row without stretching the second row. */
+@media (max-width: 700px) {
+  .hero-side .skill-line--full {
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    gap: 0 !important;
+  }
+
+  .hero-side .skill-line--natural {
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .hero-side .skill-item,
+  .hero-side .skill-sep {
+    flex: 0 0 auto !important;
+  }
+}
+
+/* Very narrow phones: preserve the justified first row by tightening only the inter-item measure. */
+@media (max-width: 380px) {
+  .hero-side .skill-line--full {
+    gap: 0 !important;
+  }
+
+  .hero-side .skill-item {
+    font-size: 0.96em !important;
+  }
+
+  .hero-side .skill-sep {
+    font-size: 0.68em !important;
+  }
+}
