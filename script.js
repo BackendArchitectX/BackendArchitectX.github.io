@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911z') {
-      url.searchParams.set('v', '20260911z');
+    if (url.searchParams.get('v') !== '20260911za') {
+      url.searchParams.set('v', '20260911za');
       link.href = url.toString();
     }
   });
@@ -26,32 +26,45 @@
       }
     }
 
-    /* Only structure the rows below NOW / BEFORE. Employment rows remain untouched. */
+    /* Only structure PRIMARY / ALSO. NOW and BEFORE remain untouched. */
     .hero-side .skill-lines {
       display: grid;
-      gap: 3px;
+      gap: 5px;
       width: 100%;
     }
 
     .hero-side .skill-line {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
       width: 100%;
       white-space: nowrap;
     }
 
     .hero-side .skill-line span {
-      display: inline-flex;
-      align-items: baseline;
+      position: relative;
+      display: block;
+      width: 100%;
       font-weight: 700;
+      text-align: center;
     }
 
-    .hero-side .skill-line span:not(:last-child)::after {
-      content: " ·";
-      margin-left: 2px;
+    .hero-side .skill-line span.edge-start {
+      text-align: left;
+    }
+
+    .hero-side .skill-line span.edge-end {
+      text-align: right;
+    }
+
+    .hero-side .skill-line span:not(.edge-end)::after {
+      content: "·";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translate(50%, -50%);
       font-weight: 700;
+      opacity: .78;
     }
 
     .hero-side .quick-links {
@@ -68,12 +81,6 @@
       line-height: 1.15;
     }
 
-    @media (max-width: 1180px) {
-      .hero-side .skill-line {
-        gap: 8px;
-      }
-    }
-
     @media (max-width: 820px) {
       .footer-inner > span {
         font-size: 29px !important;
@@ -86,10 +93,26 @@
       }
 
       .hero-side .skill-line {
+        display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
         gap: 0 8px;
         white-space: normal;
+      }
+
+      .hero-side .skill-line span,
+      .hero-side .skill-line span.edge-start,
+      .hero-side .skill-line span.edge-end {
+        width: auto;
+        text-align: left;
+      }
+
+      .hero-side .skill-line span:not(.edge-end)::after {
+        position: static;
+        display: inline;
+        margin-left: 8px;
+        transform: none;
+        opacity: 1;
       }
 
       .hero-side .quick-links {
@@ -118,16 +141,37 @@
     const setSkillRow = (row, lines) => {
       const dd = row.querySelector('dd');
       if (!dd) return;
-      dd.innerHTML = `<div class="skill-lines">${lines.map(line => `<div class="skill-line">${line.map(skill => `<span>${skill}</span>`).join('')}</div>`).join('')}</div>`;
+      dd.innerHTML = `<div class="skill-lines">${lines.map(line => `<div class="skill-line">${line.map(item => `<span class="${item.edge || ''}" style="grid-column:${item.col}">${item.skill}</span>`).join('')}</div>`).join('')}</div>`;
     };
 
     setSkillRow(profileRows[2], [
-      ['Java', 'Spring Boot', 'Microservices', 'REST'],
-      ['Hibernate/JPA', 'MySQL', 'Redis', 'AWS', 'EKS']
+      [
+        { skill: 'Java', col: '1', edge: 'edge-start' },
+        { skill: 'Spring Boot', col: '2' },
+        { skill: 'Microservices', col: '3 / span 2' },
+        { skill: 'REST', col: '5', edge: 'edge-end' }
+      ],
+      [
+        { skill: 'Hibernate/JPA', col: '1', edge: 'edge-start' },
+        { skill: 'MySQL', col: '2' },
+        { skill: 'Redis', col: '3' },
+        { skill: 'AWS', col: '4' },
+        { skill: 'EKS', col: '5', edge: 'edge-end' }
+      ]
     ]);
+
     setSkillRow(profileRows[3], [
-      ['Kafka', 'concurrency', 'Docker', 'Kubernetes'],
-      ['Jenkins', 'CloudWatch', 'JFR']
+      [
+        { skill: 'Kafka', col: '1', edge: 'edge-start' },
+        { skill: 'concurrency', col: '2' },
+        { skill: 'Docker', col: '3' },
+        { skill: 'Kubernetes', col: '4 / span 2', edge: 'edge-end' }
+      ],
+      [
+        { skill: 'Jenkins', col: '1', edge: 'edge-start' },
+        { skill: 'CloudWatch', col: '2 / span 3' },
+        { skill: 'JFR', col: '5', edge: 'edge-end' }
+      ]
     ]);
   }
 
