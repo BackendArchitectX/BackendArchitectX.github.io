@@ -1,6 +1,14 @@
 (() => {
   document.documentElement.classList.add('js');
 
+  document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
+    const url = new URL(link.href, window.location.href);
+    if (url.searchParams.get('v') !== '20260911h') {
+      url.searchParams.set('v', '20260911h');
+      link.href = url.toString();
+    }
+  });
+
   const progress = document.createElement('div');
   progress.className = 'scroll-progress';
   progress.setAttribute('aria-hidden', 'true');
