@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911x') {
-      url.searchParams.set('v', '20260911x');
+    if (url.searchParams.get('v') !== '20260911y') {
+      url.searchParams.set('v', '20260911y');
       link.href = url.toString();
     }
   });
@@ -26,6 +26,57 @@
       }
     }
 
+    /* Structured alignment for the hero profile ledger. This avoids ugly text justification. */
+    .hero-side .meta-row dd {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .hero-side .employment-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+      margin-top: 3px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .hero-side .skill-lines {
+      display: grid;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .hero-side .skill-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .hero-side .skill-line span {
+      display: inline-flex;
+      align-items: baseline;
+      font-weight: 700;
+    }
+
+    .hero-side .skill-line span:not(:last-child)::after {
+      content: " ·";
+      margin-left: 2px;
+      font-weight: 700;
+    }
+
+    .hero-side .quick-links {
+      width: 100%;
+      max-width: none !important;
+      justify-content: space-between !important;
+      gap: 20px !important;
+    }
+
     .footer-inner > span {
       font-size: 34px !important;
       font-weight: 760 !important;
@@ -33,9 +84,47 @@
       line-height: 1.15;
     }
 
+    @media (max-width: 1180px) {
+      .hero-side .employment-line {
+        gap: 12px;
+      }
+      .hero-side .skill-line {
+        gap: 8px;
+      }
+    }
+
     @media (max-width: 820px) {
       .footer-inner > span {
         font-size: 29px !important;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .hero-side .employment-line {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 2px 10px;
+        white-space: normal;
+      }
+
+      .hero-side .employment-line span + span::before {
+        content: "· ";
+      }
+
+      .hero-side .skill-lines {
+        gap: 2px;
+      }
+
+      .hero-side .skill-line {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 0 8px;
+        white-space: normal;
+      }
+
+      .hero-side .quick-links {
+        justify-content: flex-start !important;
+        gap: 12px 24px !important;
       }
     }
 
@@ -52,6 +141,34 @@
     }
   `;
   document.head.appendChild(desktopTypography);
+
+  /* Turn the compact profile copy into explicit layout groups so the right edge aligns
+     without stretching individual words. */
+  const profileRows = [...document.querySelectorAll('.hero-side .meta-row')];
+  if (profileRows.length >= 4) {
+    const setEmploymentRow = (row, title, company, period) => {
+      const dd = row.querySelector('dd');
+      if (!dd) return;
+      dd.innerHTML = `<strong>${title}</strong><div class="employment-line"><span>${company}</span><span>${period}</span></div>`;
+    };
+
+    const setSkillRow = (row, lines) => {
+      const dd = row.querySelector('dd');
+      if (!dd) return;
+      dd.innerHTML = `<div class="skill-lines">${lines.map(line => `<div class="skill-line">${line.map(skill => `<span>${skill}</span>`).join('')}</div>`).join('')}</div>`;
+    };
+
+    setEmploymentRow(profileRows[0], 'Software Engineer', 'Linux Socials', 'Apr 2025 — Present');
+    setEmploymentRow(profileRows[1], 'Technical Intern → Associate Software Engineer', 'Merkle Inspire', '2021 — 2024');
+    setSkillRow(profileRows[2], [
+      ['Java', 'Spring Boot', 'Microservices', 'REST'],
+      ['Hibernate/JPA', 'MySQL', 'Redis', 'AWS', 'EKS']
+    ]);
+    setSkillRow(profileRows[3], [
+      ['Kafka', 'concurrency', 'Docker', 'Kubernetes'],
+      ['Jenkins', 'CloudWatch', 'JFR']
+    ]);
+  }
 
   const progress = document.createElement('div');
   progress.className = 'scroll-progress';
