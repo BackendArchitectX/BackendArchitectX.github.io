@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pranay Kadu — backend software engineer working across Java, Spring Boot, distributed systems, performance and production reliability.">
+  <meta name="theme-color" content="#f4f4f0">
+  <title>Pranay Kadu — Backend Software Engineer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="identity" href="#top"><strong>Pranay Kadu</strong><span>Backend Software Engineer</span></a>
+    <nav class="nav" aria-label="Primary"><a href="#production">Production</a><a href="#systems">Systems</a><a href="#opensource">Open source</a><a href="#career">Career</a></nav>
+    <div class="header-actions"><a href="mailto:pranayp.kadu@gmail.com">Email</a><a class="resume-link" href="assets/Pranay_Kadu_Resume.pdf" target="_blank">Resume ↗</a></div>
+  </div>
+</header>
+<main id="main">
+  <section id="top" class="hero shell">
+    <div class="hero-grid">
+      <div>
+        <div class="overline">Java backend · distributed systems · production engineering</div>
+        <h1>I work on the parts of backend systems where <em>correctness, latency and failure behavior become visible.</em></h1>
+        <p class="hero-copy">Software Engineer with 4+ years across fraud screening, financial workflows and integration systems. I build services, tune hot paths, reason about transaction boundaries, and stay close enough to production to understand how the system actually fails.</p>
+      </div>
+      <aside class="hero-side">
+        <dl>
+          <div class="meta-row"><dt>Now</dt><dd><strong>Software Engineer</strong><br>Linux Socials · Apr 2025 — Present</dd></div>
+          <div class="meta-row"><dt>Before</dt><dd>Associate Software Engineer + Technical Intern<br>Merkle Inspire · 2021 — 2024</dd></div>
+          <div class="meta-row"><dt>Primary</dt><dd>Java · Spring Boot · REST · Hibernate/JPA · MySQL · Redis · AWS · EKS</dd></div>
+          <div class="meta-row"><dt>Also</dt><dd>Kafka · concurrency · Docker · Kubernetes · Jenkins · CloudWatch · JFR</dd></div>
+        </dl>
+        <div class="quick-links"><a href="https://github.com/BackendArchitectX" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#contact">Contact ↓</a></div>
+      </aside>
+    </div>
+
+    <div class="proof-ledger" aria-label="Engineering evidence">
+      <div class="proof-row"><span class="label">Performance</span><strong>−40% p95</strong><p>JFR-guided work across Hibernate access patterns, SQL, composite indexes, HikariCP and Redis caching.</p><span class="source">production</span></div>
+      <div class="proof-row"><span class="label">Throughput</span><strong>+15%</strong><p>Improved backend throughput after service, persistence and cache-path optimization.</p><span class="source">production</span></div>
+      <div class="proof-row"><span class="label">Reliability</span><strong>99.8% uptime</strong><p>Supported with CloudWatch, structured logging, alerting, runbooks, incident triage and RCA-driven fixes.</p><span class="source">production</span></div>
+      <div class="proof-row"><span class="label">Operations</span><strong>35 → 12 min</strong><p>Reduced MTTR by strengthening failure isolation, debugging paths and operational playbooks.</p><span class="source">production</span></div>
+    </div>
+  </section>
+
+  <section id="production" class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div class="section-no">01 / Production systems</div>
+        <h2>Work I would spend interview time on.</h2>
+        <p>Three systems from my professional experience. Details are intentionally generalized where the original implementation is proprietary.</p>
+      </div>
+      <div class="system-list">
+        <a class="system-row" href="work/fraud-screening.html">
+          <div class="system-index">01</div>
+          <div class="system-name"><span class="type">Fraud screening</span><h3>Decisioning under retries, bursts and dependency failure</h3></div>
+          <div class="system-body"><p>Stateless Java/Spring Boot service with idempotent APIs, Redis risk lookups and velocity counters, token-bucket rate limiting, async processing, circuit breakers, fallbacks and external risk-provider integrations.</p><div class="methods">Idempotency · Redis · rate limiting · async · circuit breakers · observability</div></div>
+          <div class="system-evidence"><div class="evidence-line"><strong>99.8%</strong><span>uptime</span></div><div class="evidence-line"><strong>35 → 12</strong><span>MTTR min</span></div><span class="row-link">Case study ↗</span></div>
+        </a>
+        <a class="system-row" href="work/financial-workflow.html">
+          <div class="system-index">02</div>
+          <div class="system-name"><span class="type">Financial workflow</span><h3>Transaction boundaries before CRUD convenience</h3></div>
+          <div class="system-body"><p>Spring/JSP transaction and approval workflows using <code>@Transactional</code>, MySQL isolation levels, optimistic locking, SQL tuning, indexing, cursor pagination and Redis caching.</p><div class="methods">ACID · isolation · optimistic locking · SQL tuning · pagination · caching</div></div>
+          <div class="system-evidence"><div class="evidence-line"><strong>ACID</strong><span>consistency</span></div><div class="evidence-line"><strong>Optimistic</strong><span>concurrency</span></div><span class="row-link">Case study ↗</span></div>
+        </a>
+        <a class="system-row" href="work/job-feed.html">
+          <div class="system-index">03</div>
+          <div class="system-name"><span class="type">Integration platform</span><h3>Keep one slow provider from slowing the product</h3></div>
+          <div class="system-body"><p>React + Spring Boot + MySQL portal with circuit breakers, retry/backoff, parallel fetch, batch inserts, caching, database-write optimization and explicit failure recovery around external APIs.</p><div class="methods">parallel fetch · bounded retry · batch persistence · cache · provider isolation</div></div>
+          <div class="system-evidence"><div class="evidence-line"><strong>−55%</strong><span>refresh latency</span></div><div class="evidence-line"><strong>+33%</strong><span>engagement</span></div><span class="row-link">Case study ↗</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="systems" class="section dark">
+    <div class="shell">
+      <div class="section-head">
+        <div class="section-no">02 / Public systems</div>
+        <h2>Projects built to go below framework-level application code.</h2>
+        <p>These are public artifacts. They are useful because a reviewer can inspect the implementation, constraints, tests and documentation directly.</p>
+      </div>
+
+      <article class="feature-project">
+        <div>
+          <div class="overline">GPU systems · public</div>
+          <h3>Vortex CUDA</h3>
+          <p>An exact vector-search engine built from CUDA kernels through C++20, Java JNI and a Spring Boot API. The system keeps indexes resident on the GPU, supports FP16 storage with FP32 accumulation, and includes a reproducible benchmark harness instead of relying on one-off timing claims.</p>
+          <div class="tech">CUDA · C++20 · JNI · Java 17 · Spring Boot · exact Top-K · FP16</div>
+          <div class="feature-links"><a href="lab/vortex-cuda.html">Read engineering notes ↗</a><a href="https://github.com/BackendArchitectX/Vortex-CUDA" target="_blank" rel="noreferrer">Repository ↗</a></div>
+        </div>
+        <div class="benchmark" aria-label="Vortex CUDA benchmark evidence">
+          <div><strong>16.7×</strong><span>lower P50 vs project scalar CPU reference</span></div>
+          <div><strong>1.67–1.72 ms</strong><span>FP32 P50 · 500K × 128 · Top-10</span></div>
+          <div><strong>1.64K+</strong><span>FP32 QPS · batch 32</span></div>
+          <div><strong>50%</strong><span>vector-storage reduction with FP16</span></div>
+        </div>
+      </article>
+
+      <div class="lab-ledger">
+        <a class="lab-row" href="lab/distrib-txn-db.html"><span class="status">01</span><h3>distrib-txn-db</h3><p>Java workshop implementation progressing through HLC, MVCC, distributed routing, transaction records, write intents, clock-uncertainty read restart and simplified serializable conflict prevention.</p><span class="stack">Java · HLC · MVCC · transactions</span></a>
+        <a class="lab-row" href="lab/aegis.html"><span class="status">02</span><h3>Aegis Insurance Decisioning</h3><p>Java + Angular decisioning system for policy, claims, premium, risk and audit workflows. The public version explicitly uses an in-memory store to keep local review simple.</p><span class="stack">Java 17 · Spring Boot · Angular</span></a>
+        <a class="lab-row" href="https://github.com/BackendArchitectX/SpringMind-AI" target="_blank" rel="noreferrer"><span class="status">03</span><h3>SpringMind-AI</h3><p>Terminal-first Java coding assistant with an LLM tool loop for file reads/writes, shell execution and iterative task completion.</p><span class="stack">Java 21 · Maven · LLM tools</span></a>
+        <a class="lab-row" href="https://github.com/BackendArchitectX/JobAgent-AI" target="_blank" rel="noreferrer"><span class="status">04</span><h3>JobAgent-AI</h3><p>Public fork of MadsLorentzen/ai-job-search, used to explore agent-assisted job evaluation, document tailoring and interview workflows.</p><span class="stack">Fork · agent workflows · Claude Code</span></a>
+        <a class="lab-row" href="https://github.com/BackendArchitectX/networksecurity" target="_blank" rel="noreferrer"><span class="status">05</span><h3>networksecurity</h3><p>Learning-oriented end-to-end MLOps project with ETL, MongoDB, MLflow, Docker, GitHub Actions and AWS deployment components.</p><span class="stack">Python · MLOps · AWS · MongoDB</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="opensource" class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div class="section-no">03 / Upstream engineering</div>
+        <h2>Small fixes, difficult failure modes.</h2>
+        <p>I care more about whether the failure mode is real and the test proves the fix than about the apparent size of the diff.</p>
+      </div>
+      <div class="oss-table">
+        <a class="oss-entry" href="https://github.com/AutoMQ/automq/pull/3493" target="_blank" rel="noreferrer"><span class="repo">AutoMQ</span><span class="state">Merged</span><div><h3>Skip AutoBalancer metrics reporter on controller-only nodes</h3><p>Process-role handling prevented broker listener resolution and reporter startup where the broker role was absent, with regression coverage across role combinations.</p></div><span class="domain">runtime / roles</span></a>
+        <a class="oss-entry" href="https://github.com/apache/fluss/pull/4263" target="_blank" rel="noreferrer"><span class="repo">Apache Fluss</span><span class="state">In review</span><div><h3>Make cached RPC connections endpoint-aware</h3><p>Connection identity moved from logical UID alone to UID + host + port so metadata endpoint changes cannot silently keep routing through a stale physical connection.</p></div><span class="domain">RPC / lifecycle</span></a>
+        <a class="oss-entry" href="https://github.com/trinodb/trino/pull/30973" target="_blank" rel="noreferrer"><span class="repo">Trino</span><span class="state">In review</span><div><h3>Prevent query failure after transaction commit starts</h3><p>Coordinates commit and failure ownership so unrelated failures cannot override the outcome after an autocommit transaction begins committing.</p></div><span class="domain">transactions / race</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="career" class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div class="section-no">04 / Career record</div>
+        <h2>Production ownership grew with the systems.</h2>
+        <p>Experience and project claims below are kept aligned with the resumes used to build this portfolio.</p>
+      </div>
+      <div class="timeline">
+        <div class="timeline-row"><span class="date">APR 2025 — NOW</span><div><h3>Linux Socials</h3><span class="role">Software Engineer</span></div><p>Designed and owned fraud-screening backend services, tuned latency and throughput, hardened dependency behavior, and supported production through observability, incident response, runbooks and RCA.</p></div>
+        <div class="timeline-row"><span class="date">DEC 2021 — APR 2024</span><div><h3>Merkle Inspire Pvt Ltd</h3><span class="role">Associate Software Engineer</span></div><p>Built Java/Spring financial microservices, transaction workflows and an external-data job portal; supported three production microservices and improved release velocity through testing, CI, reviews and cross-functional delivery.</p></div>
+        <div class="timeline-row"><span class="date">JUN 2021 — NOV 2021</span><div><h3>Merkle Inspire Pvt Ltd</h3><span class="role">Technical Intern</span></div><p>Implemented backend/API components and reduced query execution time by 27% through SQL rewrites and index tuning while building testing and database-performance fundamentals.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-head"><div class="section-no">05 / Engineering surface</div><h2>Tools are useful only when tied to a failure mode.</h2><p>This is intentionally narrower than a résumé skill cloud. It reflects the areas I would be comfortable defending in a technical interview.</p></div>
+      <div class="depth-grid">
+        <div class="depth"><h3>Service design</h3><p>Java · Spring Boot · Spring MVC · REST APIs · JPA/Hibernate · validation · exception handling · service boundaries</p></div>
+        <div class="depth"><h3>Data & consistency</h3><p>MySQL · PostgreSQL · Redis · SQL tuning · composite indexes · transaction management · isolation · optimistic locking</p></div>
+        <div class="depth"><h3>Distributed behavior</h3><p>Kafka · idempotency · retries · timeouts · circuit breakers · rate limiting · asynchronous processing · concurrency</p></div>
+        <div class="depth"><h3>Production</h3><p>AWS · EKS · Docker · Kubernetes · Jenkins · CloudWatch · structured logging · alerting · runbooks · RCA · JFR</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section contact">
+    <div class="shell contact-grid">
+      <div class="section-no">06 / Contact</div>
+      <h2>Backend systems. Measurable behavior. Fewer surprises in production.</h2>
+      <div><p>Open to backend and software-engineering roles where system design, performance and operational ownership matter.</p><div class="contact-links"><a href="mailto:pranayp.kadu@gmail.com">pranayp.kadu@gmail.com ↗</a><a href="https://github.com/BackendArchitectX" target="_blank" rel="noreferrer">github.com/BackendArchitectX ↗</a><a href="assets/Pranay_Kadu_Resume.pdf" target="_blank">Resume ↗</a></div></div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="shell footer-inner"><span>Pranay Kadu</span><span>Static site · no framework dependency · <span id="year"></span></span></div></footer>
+<script src="script.js"></script>
+</body>
+</html>
