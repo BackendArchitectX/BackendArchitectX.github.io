@@ -1,4 +1,6 @@
 (() => {
+  document.documentElement.classList.add('js');
+
   const progress = document.createElement('div');
   progress.className = 'scroll-progress';
   progress.setAttribute('aria-hidden', 'true');
