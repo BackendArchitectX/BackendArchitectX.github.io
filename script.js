@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911zi') {
-      url.searchParams.set('v', '20260911zi');
+    if (url.searchParams.get('v') !== '20260911zj') {
+      url.searchParams.set('v', '20260911zj');
       link.href = url.toString();
     }
   });
@@ -42,35 +42,30 @@
       white-space: nowrap;
     }
 
-    /* First line uses the full measure and aligns with Contact on the right. */
+    /* First line fills the measure; separators are independent flex items so they sit centered between skills. */
     .hero-side .skill-line--full {
       justify-content: space-between;
     }
 
-    /* Second line stays natural-width and is not forced to the Contact edge. */
+    /* Second line stays natural-width and uses the same separator placement. */
     .hero-side .skill-line--natural {
       justify-content: flex-start;
-    }
-
-    .hero-side .skill-chunk {
-      display: inline-flex;
-      align-items: baseline;
-      flex: 0 0 auto;
+      gap: 8px;
     }
 
     .hero-side .skill-item {
       display: inline-block;
+      flex: 0 0 auto;
       font-weight: 700;
       text-align: left;
       letter-spacing: -0.012em;
       color: #000 !important;
     }
 
-    /* Real separator elements keep every dot on the same baseline and spacing rule. */
     .hero-side .skill-sep {
       display: inline-block;
       flex: 0 0 auto;
-      margin: 0 8px;
+      margin: 0;
       font-size: .72em;
       line-height: 1;
       font-weight: 600;
@@ -110,11 +105,7 @@
         justify-content: flex-start;
         flex-wrap: wrap;
         white-space: normal;
-        row-gap: 3px;
-      }
-
-      .hero-side .skill-sep {
-        margin: 0 7px;
+        gap: 3px 7px;
       }
 
       .hero-side .quick-links {
@@ -147,10 +138,8 @@
       const renderLine = (line, isFull) => `
         <div class="skill-line ${isFull ? 'skill-line--full' : 'skill-line--natural'}">
           ${line.map((skill, index) => `
-            <span class="skill-chunk">
-              <span class="skill-item">${skill}</span>
-              ${index < line.length - 1 ? '<span class="skill-sep" aria-hidden="true">·</span>' : ''}
-            </span>
+            <span class="skill-item">${skill}</span>
+            ${index < line.length - 1 ? '<span class="skill-sep" aria-hidden="true">·</span>' : ''}
           `).join('')}
         </div>
       `;
