@@ -3,8 +3,8 @@
 
   document.querySelectorAll('link[rel="stylesheet"][href*="styles.css"]').forEach(link => {
     const url = new URL(link.href, window.location.href);
-    if (url.searchParams.get('v') !== '20260911q') {
-      url.searchParams.set('v', '20260911q');
+    if (url.searchParams.get('v') !== '20260911r') {
+      url.searchParams.set('v', '20260911r');
       link.href = url.toString();
     }
   });
@@ -13,7 +13,8 @@
   desktopTypography.textContent = `
     @media (min-width: 901px) {
       .hero-copy,
-      .proof-row p {
+      .proof-row p,
+      .system-body > p {
         text-align: justify !important;
         text-align-last: left !important;
         text-justify: inter-word !important;
