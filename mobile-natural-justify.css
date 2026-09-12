@@ -1,5 +1,6 @@
 /* Mobile-only natural justification.
-   Long-form prose is justified; compact method lists keep natural spacing.
+   Long-form prose and method summaries use browser-native justification.
+   Final lines remain left aligned and compact content is never space-between stretched.
    Desktop is intentionally untouched. */
 @media (max-width: 820px) {
   .hero-copy,
@@ -15,7 +16,8 @@
   .case-title .lede,
   .case-head > p,
   .record-row p,
-  .callout {
+  .callout,
+  .system-body .methods {
     text-align: justify !important;
     text-align-last: left !important;
     text-justify: auto !important;
@@ -25,25 +27,14 @@
     letter-spacing: normal !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
-    text-wrap: pretty !important;
   }
 
-  /* Method/technology summaries are short label lists, not prose.
-     Keep them visually balanced without stretching the spaces between items. */
   .system-body .methods {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
-    text-align: left !important;
-    text-align-last: auto !important;
-    text-justify: auto !important;
     text-wrap: pretty !important;
-    hyphens: none !important;
-    -webkit-hyphens: none !important;
-    word-spacing: normal !important;
-    letter-spacing: normal !important;
-    overflow-wrap: normal !important;
-    word-break: normal !important;
+    white-space: normal !important;
   }
 
   /* Compact labels, headings, metrics and metadata stay naturally aligned. */
@@ -83,7 +74,8 @@
   .oss-entry p,
   .timeline-row > p,
   .depth p,
-  .contact p {
+  .contact p,
+  .system-body .methods {
     text-align: justify !important;
     text-align-last: left !important;
     text-justify: auto !important;
@@ -92,16 +84,5 @@
     word-spacing: normal !important;
     letter-spacing: normal !important;
     overflow-wrap: break-word !important;
-  }
-
-  .system-body .methods {
-    text-align: left !important;
-    text-align-last: auto !important;
-    text-justify: auto !important;
-    hyphens: none !important;
-    -webkit-hyphens: none !important;
-    word-spacing: normal !important;
-    letter-spacing: normal !important;
-    text-wrap: pretty !important;
   }
 }
