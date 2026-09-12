@@ -18,31 +18,30 @@
   .callout {
     text-align: justify !important;
     text-align-last: left !important;
-    text-justify: inter-word !important;
+    text-justify: auto !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
     word-spacing: normal !important;
     letter-spacing: normal !important;
-    overflow-wrap: normal !important;
+    overflow-wrap: break-word !important;
     word-break: normal !important;
   }
 
-  /* Method/technology summaries are short token lists, not prose.
-     Full justification creates exaggerated gaps between items on narrow screens,
-     so keep them naturally spaced and left aligned. */
+  /* Short method summaries still use justification, but let the browser choose
+     natural spacing and wrapping instead of forcing wide inter-word gaps. */
   .system-body .methods {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
-    text-align: left !important;
-    text-align-last: auto !important;
+    text-align: justify !important;
+    text-align-last: left !important;
     text-justify: auto !important;
-    text-wrap: pretty !important;
-    hyphens: none !important;
-    -webkit-hyphens: none !important;
+    text-wrap: wrap !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
     word-spacing: normal !important;
     letter-spacing: normal !important;
-    overflow-wrap: normal !important;
+    overflow-wrap: break-word !important;
     word-break: normal !important;
   }
 
@@ -83,19 +82,15 @@
   .oss-entry p,
   .timeline-row > p,
   .depth p,
-  .contact p {
-    text-justify: inter-word !important;
+  .contact p,
+  .system-body .methods {
+    text-align: justify !important;
+    text-align-last: left !important;
+    text-justify: auto !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
-  }
-
-  .system-body .methods {
-    text-align: left !important;
-    text-align-last: auto !important;
-    text-justify: auto !important;
-    text-wrap: pretty !important;
-    hyphens: none !important;
-    -webkit-hyphens: none !important;
     word-spacing: normal !important;
+    letter-spacing: normal !important;
+    overflow-wrap: break-word !important;
   }
 }
