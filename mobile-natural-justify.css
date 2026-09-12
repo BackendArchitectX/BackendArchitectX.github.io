@@ -1,5 +1,5 @@
 /* Mobile-only natural justification.
-   Full paragraph lines are justified; final lines remain naturally left aligned.
+   Long-form prose is justified; compact method lists keep natural spacing.
    Desktop is intentionally untouched. */
 @media (max-width: 820px) {
   .hero-copy,
@@ -25,23 +25,24 @@
     letter-spacing: normal !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
+    text-wrap: pretty !important;
   }
 
-  /* Short method summaries still use justification, but let the browser choose
-     natural spacing and wrapping instead of forcing wide inter-word gaps. */
+  /* Method/technology summaries are short label lists, not prose.
+     Keep them visually balanced without stretching the spaces between items. */
   .system-body .methods {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
-    text-align: justify !important;
-    text-align-last: left !important;
+    text-align: left !important;
+    text-align-last: auto !important;
     text-justify: auto !important;
-    text-wrap: wrap !important;
-    hyphens: auto !important;
-    -webkit-hyphens: auto !important;
+    text-wrap: pretty !important;
+    hyphens: none !important;
+    -webkit-hyphens: none !important;
     word-spacing: normal !important;
     letter-spacing: normal !important;
-    overflow-wrap: break-word !important;
+    overflow-wrap: normal !important;
     word-break: normal !important;
   }
 
@@ -82,8 +83,7 @@
   .oss-entry p,
   .timeline-row > p,
   .depth p,
-  .contact p,
-  .system-body .methods {
+  .contact p {
     text-align: justify !important;
     text-align-last: left !important;
     text-justify: auto !important;
@@ -92,5 +92,16 @@
     word-spacing: normal !important;
     letter-spacing: normal !important;
     overflow-wrap: break-word !important;
+  }
+
+  .system-body .methods {
+    text-align: left !important;
+    text-align-last: auto !important;
+    text-justify: auto !important;
+    hyphens: none !important;
+    -webkit-hyphens: none !important;
+    word-spacing: normal !important;
+    letter-spacing: normal !important;
+    text-wrap: pretty !important;
   }
 }
