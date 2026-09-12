@@ -27,20 +27,23 @@
     word-break: normal !important;
   }
 
-  /* Production method summaries: keep natural justification but balance wrapping
-     so a single trailing item such as “observability” or “isolation” is avoided. */
+  /* Method/technology summaries are short token lists, not prose.
+     Full justification creates exaggerated gaps between items on narrow screens,
+     so keep them naturally spaced and left aligned. */
   .system-body .methods {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
-    text-align: justify !important;
-    text-align-last: left !important;
-    text-justify: inter-word !important;
-    text-wrap: balance !important;
+    text-align: left !important;
+    text-align-last: auto !important;
+    text-justify: auto !important;
+    text-wrap: pretty !important;
     hyphens: none !important;
     -webkit-hyphens: none !important;
     word-spacing: normal !important;
     letter-spacing: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
   }
 
   /* Compact labels, headings, metrics and metadata stay naturally aligned. */
@@ -87,10 +90,12 @@
   }
 
   .system-body .methods {
-    text-align: justify !important;
-    text-align-last: left !important;
-    text-wrap: balance !important;
+    text-align: left !important;
+    text-align-last: auto !important;
+    text-justify: auto !important;
+    text-wrap: pretty !important;
     hyphens: none !important;
     -webkit-hyphens: none !important;
+    word-spacing: normal !important;
   }
 }
