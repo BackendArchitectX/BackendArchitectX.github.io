@@ -6,6 +6,7 @@
   .proof-row p,
   .section-head > p,
   .system-body > p,
+  .system-body > .methods,
   .feature-project p,
   .lab-row > p,
   .oss-entry p,
@@ -28,7 +29,6 @@
   }
 
   /* Compact labels, headings, metrics and metadata stay naturally aligned. */
-  .methods,
   .tech,
   .lab-row .stack,
   .oss-entry .domain,
@@ -60,6 +60,7 @@
   .proof-row p,
   .section-head > p,
   .system-body > p,
+  .system-body > .methods,
   .feature-project p,
   .lab-row > p,
   .oss-entry p,
