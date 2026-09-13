@@ -69,14 +69,15 @@
 
       #engineering .section-head > p {
         width: 100% !important;
-        max-width: 1000px !important;
+        max-width: 1100px !important;
         font-size: 18px !important;
         line-height: 1.62 !important;
         text-align: justify !important;
         text-align-last: left !important;
-        text-justify: auto !important;
+        text-justify: inter-word !important;
         text-wrap: wrap !important;
         hyphens: auto !important;
+        overflow-wrap: normal !important;
         word-spacing: normal !important;
         letter-spacing: normal !important;
       }
