@@ -291,3 +291,13 @@ body{font-size:18px}
   .oss-group-head h3{font-size:25px}
   .oss-entry h4{font-size:22px}
 }
+
+/* Authorship-distinct acknowledgment for merged upstream research */
+.oss-credit{margin-top:38px;padding:24px 0 0;border-top:1px solid var(--line-strong)}
+.oss-credit-kicker{display:block;margin-bottom:10px;font:600 11px/1.5 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.oss-credit h3{margin:0 0 12px;font-size:clamp(20px,2.2vw,26px);line-height:1.25;letter-spacing:-.025em;font-weight:630}
+.oss-credit p{max-width:900px;margin:0 0 13px;font-size:16px;line-height:1.7;color:var(--muted)}
+.oss-credit p strong{color:var(--ink);font-weight:650}
+.oss-credit>a{font-size:14px;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:2px}
+.oss-credit>a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+@media(max-width:820px){.oss-credit{margin-top:28px;padding-top:22px}.oss-credit p{font-size:15px;line-height:1.68}}
