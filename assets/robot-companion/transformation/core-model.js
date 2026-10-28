@@ -41,7 +41,26 @@ function createCompanionModel(T, options = {}) {
   function shield(width,height,depth=.024){
     const s=new T.Shape();s.moveTo(-width*.37,height*.48);s.quadraticCurveTo(-width*.50,height*.48,-width*.50,height*.31);s.lineTo(-width*.48,-height*.28);s.quadraticCurveTo(-width*.32,-height*.46,-width*.08,-height*.50);s.quadraticCurveTo(width*.23,-height*.51,width*.48,-height*.28);s.lineTo(width*.5,height*.30);s.quadraticCurveTo(width*.50,height*.47,width*.35,height*.48);s.closePath();
     const g=new T.ExtrudeGeometry(s,{depth,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.009,bevelThickness:.008,curveSegments:high?7:4});
-    const uv=g.attributes.uv,p=g.attributes.position;for(let i=0;i<p.count;i++)uv.setXY(i,p.getX(i)/width+.5,p.getY(i)/height+.5);return g;
+    const uv=g.attributes.uv,p=g.attributes.position;for(let i=0;i<p.count;i++)uv.setXY(i,p.getX(i)/width+.5,p.getY(i)/height+.5);return subdivideFaces(g);
+  }
+  function subdivideFaces(g){
+    const positions=[],uvs=[],out=new T.BufferGeometry(),p=g.attributes.position,u=g.attributes.uv;
+    const push=(a,b,c)=>{for(const v of[a,b,c]){positions.push(v[0],v[1],v[2]);uvs.push(v[3],v[4]);}};
+    const point=i=>[p.getX(i),p.getY(i),p.getZ(i),u.getX(i),u.getY(i)],mid=(a,b)=>a.map((v,i)=>(v+b[i])*.5);
+    for(const group of g.groups){const start=positions.length/3;for(let i=group.start;i<group.start+group.count;i+=3){const a=point(i),b=point(i+1),c=point(i+2);if(group.materialIndex===0){const ab=mid(a,b),bc=mid(b,c),ca=mid(c,a);push(a,ab,ca);push(ab,b,bc);push(ca,bc,c);push(ab,bc,ca);}else push(a,b,c);}out.addGroup(start,positions.length/3-start,group.materialIndex);}
+    out.setAttribute('position',new T.Float32BufferAttribute(positions,3));out.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));out.computeVertexNormals();return out;
+  }
+  function smoothShading(g){
+    const p=g.attributes.position,n=g.attributes.normal,buckets=new Map();
+    for(let i=0;i<p.count;i++){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*10000)).join(',');if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(i);}
+    const src=n.array.slice();
+    for(const indices of buckets.values())for(const i of indices){let x=0,y=0,z=0;for(const j of indices){if(src[i*3]*src[j*3]+src[i*3+1]*src[j*3+1]+src[i*3+2]*src[j*3+2]>.42){x+=src[j*3];y+=src[j*3+1];z+=src[j*3+2];}}const len=Math.hypot(x,y,z)||1;n.setXYZ(i,x/len,y/len,z/len);}return g;
+  }
+  function irisDome(radius){
+    const positions=[],uv=[],indices=[],rings=8,segments=high?80:48;
+    for(let j=0;j<=rings;j++){const r=j/rings;for(let i=0;i<=segments;i++){const a=i/segments*Math.PI*2;positions.push(Math.cos(a)*r*radius,Math.sin(a)*r*radius,.122+.038*(1-r*r));uv.push(.5+Math.cos(a)*r*.5,.5+Math.sin(a)*r*.5);}}
+    for(let j=0;j<rings;j++)for(let i=0;i<segments;i++){const a=j*(segments+1)+i,b=a+segments+1;indices.push(a,b,a+1,b,b+1,a+1);}
+    const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
   }
   function aoGeometry(g,amount){const p=g.attributes.position,c=[];for(let i=0;i<p.count;i++){const a=amount(p.getX(i),p.getY(i),p.getZ(i));c.push(a,a,a);}g.setAttribute('color',new T.Float32BufferAttribute(c,3));return g;}
   function agedClone(m){const n=m.clone();n.vertexColors=true;return n;}
@@ -50,7 +69,7 @@ function createCompanionModel(T, options = {}) {
   for(const side of [-1,1]){
     for(const front of [1,-1]){
       const g=shield(.35,.67,.025),p=g.attributes.position;
-      for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setZ(i,p.getZ(i)+.050*(1-Math.pow(x/.19,2))+.035*(1-Math.pow(y/.35,2)));}g.computeVertexNormals();
+      for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setZ(i,p.getZ(i)+.050*(1-Math.pow(x/.19,2))+.035*(1-Math.pow(y/.35,2)));}g.computeVertexNormals();smoothShading(g);
       const plate=mesh(torso,g,[materials.red[side<0?0:1],materials.edge],[side*.175,.015,front*.235]);plate.rotation.y=front<0?Math.PI:side*.10;plate.rotation.z=side*-.07;
     }
     ball(torso,materials.led,[side*.18,.13,.317],[.013,.022,.008],true);
@@ -69,7 +88,8 @@ function createCompanionModel(T, options = {}) {
     if(z>0){
       const front=Math.pow(z/.64,3),cheek=Math.exp(-Math.pow((Math.abs(x)-.48)/.23,2)-Math.pow((y-.43)/.25,2));
       const recess=Math.exp(-Math.pow((Math.abs(x)-.375)/.245,2)-Math.pow((y-.79)/.235,2));
-      z+=front*(.045*cheek-.085*recess+.023*Math.exp(-x*x/.10-(y-.34)*(y-.34)/.08));
+      const nose=.026*Math.exp(-x*x/.012-(y-.48)*(y-.48)/.010);
+      z+=front*(.055*cheek-.077*recess+.023*Math.exp(-x*x/.10-(y-.34)*(y-.34)/.08)+nose);
     }
     if(y<.18)y=.18+(y-.18)*.73;
     fp.setXYZ(i,x,y,z);
@@ -89,25 +109,25 @@ function createCompanionModel(T, options = {}) {
   for(const side of [-1,1]){
     const socket=new T.Group();socket.position.set(side*.375,.79,.566);head.add(socket);
     // The globe sits in the face. The corneal surface is shallow, not a protruding ball.
-    mesh(socket,new T.TorusGeometry(.245,.020,high?12:8,high?64:40),materials.mouth,[0,0,.016],[1,1.025,1]);
-    mesh(socket,new T.TorusGeometry(.229,.018,high?12:8,high?64:40),materials.bronze,[0,0,.034]);
+    mesh(socket,new T.TorusGeometry(.245,.024,high?12:8,high?64:40),materials.face,[0,0,.016],[1,1.025,1]);
+    const innerLid=materials.face.clone();innerLid.color.multiplyScalar(.88);
+    mesh(socket,new T.TorusGeometry(.227,.010,high?12:8,high?64:40),innerLid,[0,0,.036]);
     const gaze=new T.Group();socket.add(gaze);
     ball(gaze,materials.eye,[0,0,.018],[.225,.227,.108]);
-    mesh(gaze,new T.CircleGeometry(.180,high?80:48),irisMaterial,[0,0,.122]);
-    ball(gaze,materials.pupil,[0,0,.124],[.124,.127,.022]);
+    mesh(gaze,irisDome(.205),irisMaterial);
+    ball(gaze,materials.pupil,[0,0,.145],[.121,.124,.040]);
     ball(gaze,materials.glint,[-.064,.073,.149],[.027,.041,.004],true).rotation.z=-.22;
     ball(gaze,materials.glint,[.045,-.040,.150],[.009,.011,.003],true);
     const top=mesh(socket,new T.SphereGeometry(.242,high?48:28,high?24:14,0,Math.PI*2,0,Math.PI/2),materials.face,[0,0,.018],[1,1,.70]);
     const bottom=mesh(socket,new T.SphereGeometry(.242,high?48:28,high?24:14,0,Math.PI*2,Math.PI/2,Math.PI/2),materials.face,[0,0,.018],[1,1,.70]);
     top.rotation.x=-Math.PI/2;bottom.rotation.x=Math.PI/2;
     refs.eyes.push({socket,gaze});refs.lids.push({top,bottom});
-    refs.brows.push(tube(socket,materials.face,[[-.215,.168,.003],[-.04,.268,.025],[.183,.195,.008]],.025));
-    tube(head,materials.face,[[side*.21,.49,.595],[side*.40,.40,.596],[side*.56,.39,.523]],.012);
+    refs.brows.push(tube(socket,materials.face,[[-.215,.168,.003],[-.04,.268,.025],[.183,.195,.008]],.018));
   }
-  ball(head,materials.face,[0,.48,.644],[.096,.052,.052]);
+  ball(head,materials.face,[0,.48,.656],[.076,.038,.043]);
   for(const side of [-1,1])ball(head,materials.mouth,[side*.036,.467,.690],[.018,.009,.004],true);
   refs.smile=tube(head,materials.mouth,[[-.115,.319,.616],[-.055,.291,.642],[.020,.292,.646],[.104,.326,.624]],.010);
-  tube(head,materials.face,[[-.080,.273,.628],[0,.261,.644],[.078,.278,.628]],.017);
+  tube(head,materials.face,[[-.080,.273,.628],[0,.261,.644],[.078,.278,.628]],.012);
 
   const cap=new T.Group();head.add(cap);refs.cap=cap;
   const profile=[[.91,1.04],[.83,1.27],[.68,1.50],[.47,1.73],[.20,1.96],[0,2.08]].map(([r,y])=>new T.Vector2(r,y));
@@ -123,7 +143,7 @@ function createCompanionModel(T, options = {}) {
         const radius=row.r0+(row.r1-row.r0)*v+z+.012*Math.sin(i*2+j);
         p.setXYZ(k,Math.sin(angle)*radius,(row.lo+row.hi)/2+y,Math.cos(angle)*radius);
       }
-      g.computeVertexNormals();aoGeometry(g,(x,y,z)=>.80+.18*Math.min(1,Math.max(0,(y-row.lo)/height*2)));
+      g.computeVertexNormals();smoothShading(g);aoGeometry(g,(x,y,z)=>.80+.18*Math.min(1,Math.max(0,(y-row.lo)/height*2)));
       mesh(cap,g,[agedClone(materials.red[(i+j)%4]),materials.edge]);
       const y=row.lo+height*.24,r=row.r0+(row.r1-row.r0)*.24+.05;
       for(const s of [-1,1])ball(cap,materials.bronze,[Math.sin(theta+s*span*.32)*r,y,Math.cos(theta+s*span*.32)*r],[.012,.012,.012],true);
@@ -176,7 +196,8 @@ function poseCompanionModel(T,model,state){
   const target=state.target||new T.Vector3(0,1.16,4);model.root.updateMatrixWorld(true);const local=model.root.worldToLocal(target.clone());
   let yaw=clamp(Math.atan2(local.x,local.z),-.44,.44),pitch=clamp(-Math.atan2(local.y-1.16,Math.hypot(local.x,local.z)),-.24,.24);if(spinning){yaw=0;pitch=0;}
   model.head.rotation.set(pitch,yaw,-yaw*.10+(idle&&!state.pointer?Math.sin(t*.7)*.015:0),'YXZ');model.torso.rotation.z=-yaw*.025;model.root.updateMatrixWorld(true);
-  const gaze=[];for(const eye of model.eyes){const v=eye.socket.worldToLocal(target.clone());v.z+=.85;const ey=spinning?0:clamp(Math.atan2(v.x,v.z),-.24,.24),ex=spinning?0:clamp(-Math.atan2(v.y,Math.hypot(v.x,v.z)),-.20,.20);eye.gaze.rotation.set(ex,ey,0,'YXZ');gaze.push({x:ex,y:ey});}
+  const gazeTarget=state.gazeTarget||target;
+  const gaze=[];for(const eye of model.eyes){const v=eye.socket.worldToLocal(gazeTarget.clone());v.z+=.85;const ey=spinning?0:clamp(Math.atan2(v.x,v.z),-.24,.24),ex=spinning?0:clamp(-Math.atan2(v.y,Math.hypot(v.x,v.z)),-.20,.20);eye.gaze.rotation.set(ex,ey,0,'YXZ');gaze.push({x:ex,y:ey});}
   const phase=t%4.9,blink=idle&&phase>3.6&&phase<3.87?Math.sin((phase-3.6)/.27*Math.PI):0;for(const lid of model.lids){lid.top.rotation.x=-Math.PI/2*(1-blink);lid.bottom.rotation.x=Math.PI/2*(1-blink);}
   for(const brow of model.brows)brow.position.y=(hop>=0&&hop<.95?.016:0)+Math.abs(yaw)*.02;model.smile.scale.x=hop>=0&&hop<.95?1.07:1;
   let angle=0;if(wave>=0&&wave<1.85){if(wave<.3)angle=2.35*ease(wave/.3);else if(wave<1.35)angle=2.35+Math.sin((wave-.3)*Math.PI*5.5)*.14;else angle=2.35*(1-ease((wave-1.35)/.5));}

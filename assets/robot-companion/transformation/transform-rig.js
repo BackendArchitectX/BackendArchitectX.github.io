@@ -2,26 +2,32 @@
 function createTransformingCompanion(T,options={}){
   const core=typeof createCompanionModel==='function'?{createCompanionModel,poseCompanionModel}:require('./core-model.js');
   const model=core.createCompanionModel(T,options),root=model.root;
-  const materials=model.materials,seen=new Set(),faceHex=materials.face.color.getHex();
-  // Use clean, softly lit materials for judging motion; the former gritty atlas is omitted.
+  const materials=model.materials,seen=new Set(),faceR=materials.face.color.r;
+  const makeSurfaces=typeof createCompanionSurfaces==='function'?createCompanionSurfaces:require('./surface-detail.js').createCompanionSurfaces;
+  const surfaces=options.createCanvas?makeSurfaces(T,options.createCanvas):null;
+  model.cap.scale.y=.88;model.cap.position.y=.1242;
+  for(const leg of model.legs)leg.node.scale.set(1.10,1,1.10);
+  // Preserve a clean, friendly face while adding fine material grain and real reflections.
   root.traverse(o=>{
     if(!o.isMesh)return;
     o.geometry.deleteAttribute('color');
+    if(o.material===materials.glint){o.visible=false;return;}
     for(const m of(Array.isArray(o.material)?o.material:[o.material])){
       if(seen.has(m))continue;seen.add(m);
-      const face=m.color.getHex()===faceHex,red=m.roughness===.65&&m.metalness===.43;
-      if(face){m.color.set('#b9bea1');m.roughness=.52;m.metalness=.20;}
-      if(red){m.color.set('#be7050');m.roughness=.46;m.metalness=.58;}
+      const face=m.roughness===.8&&m.metalness===.30,red=m.roughness===.65&&m.metalness===.43;
+      if(face&&surfaces)surfaces.apply(m,'olive',Math.max(.8,Math.min(1,m.color.r/faceR)));
+      if(red&&surfaces)surfaces.apply(m,m.color.r<.2?'copperDark':'copper');
       m.vertexColors=false;
     }
   });
-  materials.bronze.color.set('#bca16b');materials.bronze.roughness=.4;
-  materials.edge.color.set('#8c704d');materials.mouth.color.set('#505541');
-  materials.joint.color.set('#42483d');
+  if(surfaces){surfaces.apply(materials.bronze,'brass');surfaces.apply(materials.edge,'brass',.72);surfaces.apply(materials.joint,'lining');}
+  materials.mouth.color.set('#424c32');
   const copper=new T.MeshStandardMaterial({color:'#bd6a43',roughness:.42,metalness:.64,envMapIntensity:.9});
   const inside=new T.MeshStandardMaterial({color:'#665044',roughness:.68,metalness:.5});
   const gold=new T.MeshStandardMaterial({color:'#c2a06a',roughness:.33,metalness:.80});
   const slit=new T.MeshStandardMaterial({color:'#282d25',roughness:.40,metalness:.1});
+  if(surfaces){surfaces.apply(copper,'copper');surfaces.apply(gold,'brass');surfaces.apply(inside,'copperDark');}
+  copper.side=inside.side=gold.side=T.DoubleSide;
   const parts=[];
   function mesh(parent,g,m){const o=new T.Mesh(g,m);o.castShadow=o.receiveShadow=true;parent.add(o);return o;}
   function shield(w,h){
@@ -29,8 +35,25 @@ function createTransformingCompanion(T,options={}){
     return new T.ExtrudeGeometry(s,{depth:.037,steps:1,bevelEnabled:true,bevelSegments:3,bevelSize:.012,bevelThickness:.012,curveSegments:7});
   }
   function patch(radius,height,span){
-    const g=new T.CylinderGeometry(radius,radius,height,24,2,true,-span/2,span),p=g.attributes.position;
-    for(let i=0;i<p.count;i++)p.setZ(i,p.getZ(i)-radius);g.computeVertexNormals();return g;
+    const g=new T.BufferGeometry(),positions=[],normals=[],uv=[],segments=16,thickness=.028;
+    const point=(angle,y,r)=>[Math.sin(angle)*r,y,Math.cos(angle)*r-radius];
+    function quad(a,b,c,d,na,nb,nc,nd,ua=[0,0],ub=[1,0],uc=[1,1],ud=[0,1]){for(const i of[0,1,2,0,2,3]){positions.push(...[a,b,c,d][i]);normals.push(...[na,nb,nc,nd][i]);uv.push(...[ua,ub,uc,ud][i]);}}
+    for(const inner of[false,true]){
+      const start=positions.length/3,r=radius-(inner?thickness:0),sign=inner?-1:1;
+      for(let i=0;i<segments;i++)for(let j=0;j<2;j++){
+        const a=-span/2+i/segments*span,b=-span/2+(i+1)/segments*span,y0=-height/2+j*height/2,y1=y0+height/2,n0=[Math.sin(a)*sign,0,Math.cos(a)*sign],n1=[Math.sin(b)*sign,0,Math.cos(b)*sign];
+        const p0=point(a,y0,r),p1=point(b,y0,r),p2=point(b,y1,r),p3=point(a,y1,r),u0=[i/segments,j/2],u1=[(i+1)/segments,j/2],u2=[(i+1)/segments,(j+1)/2],u3=[i/segments,(j+1)/2];
+        if(inner)quad(p0,p3,p2,p1,n0,n0,n1,n1,u0,u3,u2,u1);else quad(p0,p1,p2,p3,n0,n1,n1,n0,u0,u1,u2,u3);
+      }g.addGroup(start,positions.length/3-start,inner?1:0);
+    }
+    const edgeStart=positions.length/3;
+    for(let i=0;i<segments;i++){
+      const a=-span/2+i/segments*span,b=-span/2+(i+1)/segments*span,up=[0,1,0],down=[0,-1,0];
+      quad(point(a,height/2,radius),point(b,height/2,radius),point(b,height/2,radius-thickness),point(a,height/2,radius-thickness),up,up,up,up);
+      quad(point(a,-height/2,radius),point(a,-height/2,radius-thickness),point(b,-height/2,radius-thickness),point(b,-height/2,radius),down,down,down,down);
+    }
+    for(const side of[-1,1]){const a=side*span/2,n=[side*Math.cos(a),0,-side*Math.sin(a)],p0=point(a,-height/2,radius),p1=point(a,-height/2,radius-thickness),p2=point(a,height/2,radius-thickness),p3=point(a,height/2,radius);if(side>0)quad(p0,p1,p2,p3,n,n,n,n);else quad(p3,p2,p1,p0,n,n,n,n);}
+    g.addGroup(edgeStart,positions.length/3-edgeStart,2);g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));return g;
   }
   function addPart(node,closed,parent,position,rotation,scale,delay,duration,peel,theta=0){
     const startQ=new T.Quaternion().setFromEuler(new T.Euler(...closed.rotation));
@@ -42,7 +65,7 @@ function createTransformingCompanion(T,options={}){
   const angles=[0,Math.PI/4,Math.PI/2,Math.PI*.75,Math.PI,Math.PI*1.25,Math.PI*1.5,Math.PI*1.75];
   angles.forEach((theta,i)=>{
     const g=i===0?shield(1.16,1.34):patch(.89,1.31,Math.PI/4*.97);
-    const node=new T.Group();mesh(node,g,i===0?[copper,gold]:copper).material.side=T.DoubleSide;
+    const node=new T.Group();mesh(node,g,i===0?[copper,gold]:[copper,inside,gold]);
     const rim=new T.Mesh(new T.TorusGeometry(.014,.005,4,8),gold);rim.position.set(.22,.46,.034);node.add(rim);
     let parent=model.torso,pos=[0,-.025,.35],rot=[0,0,0],scale=[.47,.48,.48];
     if(i===1||i===7){const side=i===1?1:-1;parent=model.arms.find(a=>a.side===side).node;pos=[side*.015,.015,.055];rot=[0,side*.5,side*.35];scale=[.29,.22,.29];}
@@ -53,13 +76,15 @@ function createTransformingCompanion(T,options={}){
   // Two recognizable face shutters carry the closed form's narrow eye slits.
   for(const side of [-1,1]){
     const theta=side*.39,node=new T.Group();
-    mesh(node,patch(.91,.67,.80),copper).material.side=T.DoubleSide;
+    mesh(node,patch(.91,.67,.80),[copper,inside,gold]);
+    for(const y of[-.22,0,.22]){const hinge=mesh(node,new T.CylinderGeometry(.017,.017,.105,12),gold);hinge.position.set(side*.34,y,-.06);}
+    const hingePin=mesh(node,new T.CylinderGeometry(.006,.006,.59,10),inside);hingePin.position.set(side*.34,0,-.06);
     const eyeSlit=mesh(node,new T.BoxGeometry(.23,.029,.012),slit);eyeSlit.position.set(-side*.025,.035,.012);eyeSlit.rotation.z=side*.025;
     for(const y of [-.30,.30]){const seam=mesh(node,new T.BoxGeometry(.64,.012,.015),gold);seam.position.set(0,y,-.02);}
     addPart(node,{position:[Math.sin(theta)*.91,.65,Math.cos(theta)*.91],rotation:[0,theta,0]},model.head,[side*.82,.87,-.11],[0,side*Math.PI/2,side*.08],[.37,.62,.43],.38,.95,.26,theta);
   }
   for(let i=0;i<6;i++){
-    const theta=.92+i*(Math.PI*2-1.84)/5,node=new T.Group();mesh(node,patch(.90,.67,.75),copper).material.side=T.DoubleSide;
+    const theta=.92+i*(Math.PI*2-1.84)/5,node=new T.Group();mesh(node,patch(.90,.67,.75),[copper,inside,gold]);
     const targetTheta=1.12+i*(Math.PI*2-2.24)/5;
     addPart(node,{position:[Math.sin(theta)*.90,.65,Math.cos(theta)*.90],rotation:[0,theta,0]},model.head,[Math.sin(targetTheta)*.80,1.02,Math.cos(targetTheta)*.64],[0,targetTheta,0],[.58,.55,.58],.47,.98,.18,theta);
   }
@@ -75,7 +100,7 @@ function createTransformingCompanion(T,options={}){
   function pose(state){
     const t=Math.max(0,Math.min(4.3,state.elapsed)),ease=(start,duration)=>{let x=Math.max(0,Math.min(1,(t-start)/duration));return x*x*(3-2*x);};
     const head=ease(.65,.92),body=ease(.85,.97),arms=ease(1.05,1.05),legs=ease(1.24,.95),look=ease(1.63,.65),eyes=ease(1.27,.35);
-    const p=core.poseCompanionModel(T,model,{time:state.clock,idle:state.idle&&t>2.2,pointer:state.pointer,target:state.target,waveAt:state.waveAt??-100});
+    const p=core.poseCompanionModel(T,model,{time:state.clock,idle:state.idle&&t>2.2,pointer:state.pointer,target:state.target,gazeTarget:state.gazeTarget,waveAt:state.waveAt??-100});
     model.head.position.y=.40-.45*(1-head);model.head.rotation.x*=look;model.head.rotation.y*=look;model.head.rotation.z*=look;
     model.torso.position.y=-.24*(1-body);
     for(const arm of model.arms){arm.node.rotation.z=arm.side*2.5*(1-arms)+arm.node.rotation.z*arms;arm.elbow.rotation.x=1.12*(1-arms);}
