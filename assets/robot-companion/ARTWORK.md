@@ -4,7 +4,7 @@ The character was generated with the built-in image-generation tool from two use
 
 The interactive page uses the resulting transparent character artwork in separate head, body and arm layers. Pointer position controls a gently eased head turn. There are blinks, a wave and a happy hop. The Pause control stops the animation; reduced-motion preferences start the page paused. The artwork is a 3D-style render, animated as image layers rather than a 3D model.
 
-The GitHub profile uses transparent animated WebP loops with the same character, plus PNG stills for reduced-motion preferences. Light and dark artwork follow GitHub's theme context. Pointer tracking runs on the linked interactive page because GitHub sanitizes scripts from READMEs and images do not receive page mouse events.
+The GitHub profile uses a transparent, script-free SVG loop with the same character. Its text follows the page theme, and reduced-motion preferences show a still character. The artwork is embedded in the SVG so it renders inside GitHub's image context without external image requests. Pointer tracking runs on the linked interactive page because GitHub sanitizes scripts from READMEs and images do not receive page mouse events.
 
 ## Character prompt
 
