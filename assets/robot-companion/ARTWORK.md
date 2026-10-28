@@ -1,8 +1,10 @@
 # Robot companion artwork and motion
 
-The character was generated with the built-in image-generation tool from two user-supplied character references. The reference photographs are not included in the public repository.
+The README character artwork was generated with the built-in image-generation tool from two user-supplied character references. The reference photographs are not included in the public repository.
 
-The interactive page uses the resulting transparent character artwork in separate head, body and arm layers. Pointer position controls a gently eased head turn. There are blinks, a wave and a happy hop. The Pause control stops the animation; reduced-motion preferences start the page paused. The artwork is a 3D-style render, animated as image layers rather than a 3D model.
+The interactive page now uses an actual procedural, articulated 3D model, with a mesh head, tiled cap, spherical eyeballs, irises, pupils, eyelids, arms, hands and legs. The head and both eyes aim independently toward the pointer in world space. The model includes real-time lighting, metal materials, blinking, waving, a happy hop and a full turn. It uses no character image or billboard. The readable model source is in `assets/robot-companion/robot-model.js`; the deployed page bundles it and the MIT-licensed Three.js engine so it needs no external script or model downloads.
+
+The idle-motion control pauses automatic movement while leaving pointer tracking and requested gestures active. Reduced-motion preferences disable idle movement by default. Pointer events render a new pose immediately, independently of the idle loop. A geometry-projection renderer provides a moving 3D fallback when WebGL is unavailable.
 
 The GitHub profile uses a transparent, script-free SVG loop with the same character. Its text follows the page theme, and reduced-motion preferences show a still character. The artwork is embedded in the SVG so it renders inside GitHub's image context without external image requests. Pointer tracking runs on the linked interactive page because GitHub sanitizes scripts from READMEs and images do not receive page mouse events.
 
