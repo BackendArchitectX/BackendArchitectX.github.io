@@ -12,11 +12,14 @@ function readCompanionGLB(arrayBuffer) {
 
 async function createImportedCompanion(T,arrayBuffer,options={}) {
   const data=readCompanionGLB(arrayBuffer),j=data.json,primitive=j.meshes[0].primitives[0],g=new T.BufferGeometry();
-  for(const [semantic,name] of Object.entries({POSITION:'position',NORMAL:'normal',TEXCOORD_0:'uv',JOINTS_0:'skinIndex',WEIGHTS_0:'skinWeight'})){
+  for(const [semantic,name] of Object.entries({POSITION:'position',NORMAL:'normal',TEXCOORD_0:'uv',JOINTS_0:'skinIndex',WEIGHTS_0:'skinWeight',COLOR_0:'color'})){
     if(primitive.attributes[semantic]===undefined)continue;
     const a=data.accessor(primitive.attributes[semantic]);g.setAttribute(name,new T.BufferAttribute(a.array,a.size,a.normalized));
   }
-  g.setIndex(new T.BufferAttribute(data.accessor(primitive.indices).array,1));
+  const parts=j.meshes[0].primitives.map(p=>({indices:data.accessor(p.indices).array,material:p.material||0}));
+  const indices=new Uint32Array(parts.reduce((n,p)=>n+p.indices.length,0));let start=0;
+  for(const part of parts){indices.set(part.indices,start);g.addGroup(start,part.indices.length,part.material);start+=part.indices.length;}
+  g.setIndex(new T.BufferAttribute(indices,1));
   const textures=[];
   for(let i=0;i<j.images.length;i++){
     const source=data.imageBytes(i);let img;
@@ -27,14 +30,24 @@ async function createImportedCompanion(T,arrayBuffer,options={}) {
       finally{URL.revokeObjectURL(url);}
     }
     const canvas=options.createCanvas(img.width,img.height),ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
-    const texture=new T.CanvasTexture(canvas);texture.flipY=false;texture.colorSpace=i===0?T.SRGBColorSpace:T.NoColorSpace;texture.userData.pixels=ctx.getImageData(0,0,img.width,img.height);texture.userData.pixels.flipY=false;textures.push(texture);
+    const texture=new T.CanvasTexture(canvas);texture.flipY=false;texture.anisotropy=options.anisotropy||1;texture.colorSpace=i===0?T.SRGBColorSpace:T.NoColorSpace;texture.userData.pixels=ctx.getImageData(0,0,img.width,img.height);texture.userData.pixels.flipY=false;textures.push(texture);
   }
-  const material=new T.MeshStandardMaterial({map:textures[0],roughnessMap:textures[1],metalnessMap:textures[1],roughness:1,metalness:1});
-  material.userData.metalRoughPixels=textures[1].userData.pixels;
+  function textureAt(index){const source=j.textures[index].extensions?.EXT_texture_webp?.source??j.textures[index].source;return textures[source];}
+  const materials=j.materials.map(source=>{
+    const p=source.pbrMetallicRoughness||{},eye=source.name==='Amber eyes';
+    const material=eye?new T.MeshPhysicalMaterial({clearcoat:.2,clearcoatRoughness:.18}):new T.MeshStandardMaterial();
+    material.name=source.name||'Character surface';material.vertexColors=!!g.attributes.color;
+    material.roughness=p.roughnessFactor??1;material.metalness=p.metallicFactor??1;
+    if(p.baseColorTexture)material.map=textureAt(p.baseColorTexture.index);
+    if(p.metallicRoughnessTexture){const texture=textureAt(p.metallicRoughnessTexture.index);material.roughnessMap=texture;material.metalnessMap=texture;material.userData.metalRoughPixels=texture.userData.pixels;}
+    const finish=source.extras||{};material.userData.roughnessMin=finish.roughnessMin??.045;material.userData.roughnessMax=finish.roughnessMax??1;
+    if(finish.roughnessMin!==undefined){material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor, '+finish.roughnessMin.toFixed(4)+', '+finish.roughnessMax.toFixed(4)+');');};material.customProgramCacheKey=()=>material.name+'-finish-v1';}
+    return material;
+  });
   const root=new T.Group();root.name='PawnyCompanion';
   const body=new T.Bone();body.name='Body';
   const head=new T.Bone();head.name='Head';head.position.set(0,-.018,0);body.add(head);
-  const mesh=new T.SkinnedMesh(g,material);mesh.name='PawnyCharacter';mesh.add(body);root.add(mesh);root.updateMatrixWorld(true);
+  const mesh=new T.SkinnedMesh(g,materials.length===1?materials[0]:materials);mesh.name='PawnyCharacter';mesh.add(body);root.add(mesh);root.updateMatrixWorld(true);
   mesh.bind(new T.Skeleton([body,head]));mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;
   root.scale.setScalar(2.25);
   const pose={yaw:0,pitch:0,roll:0,bodyOffset:0};mesh.userData.companionPose=pose;

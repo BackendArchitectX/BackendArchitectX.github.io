@@ -1,7 +1,7 @@
 /* Deferred geometry fallback with GGX lighting, studio reflections, shadows and contact shading. */
 function createCompanionSoftwareRenderer(T,canvas){
   const ctx=canvas.getContext('2d');if(!ctx)throw Error('A drawing context is unavailable.');
-  let width=640,height=420,displayWidth=640,displayHeight=420,quality=1,image,depth,owner,world,normalBuffer,uvBuffer;
+  let width=640,height=420,displayWidth=640,displayHeight=420,quality=1,image,depth,owner,world,normalBuffer,uvBuffer,colorBuffer;
   const vp=new T.Matrix4(),normalMatrix=new T.Matrix3(),shadowVP=new T.Matrix4(),shadowSize=256,shadowDepth=new Float32Array(shadowSize*shadowSize);
   const lightCamera=new T.OrthographicCamera(-2.8,2.8,3.1,-2.5,.1,19);lightCamera.position.set(-3,5,5);lightCamera.lookAt(0,.55,0);lightCamera.updateMatrixWorld(true);shadowVP.multiplyMatrices(lightCamera.projectionMatrix,lightCamera.matrixWorldInverse);
   const se=shadowVP.elements,materials=[null],materialIds=new WeakMap(),stats={renderMs:0,meshes:0,triangles:0};
@@ -12,10 +12,10 @@ function createCompanionSoftwareRenderer(T,canvas){
   const key=normalized(-3,4.45,5),fill=normalized(4,1.45,4),lights=[{dir:key,rgb:[3.4,3.13,2.70],shadow:true},{dir:fill,rgb:[.70,.83,.92],shadow:false}];
   function softbox(direction,w,h,rgb){const right=normalized(direction[2],0,-direction[0]),up=[direction[1]*right[2],direction[2]*right[0]-direction[0]*right[2],-direction[1]*right[0]];return {direction,right,up,w,h,rgb};}
   const boxes=[softbox(normalized(-.48,.56,.68),.21,.43,[5.8,5.55,5.0]),softbox(normalized(.62,.28,.73),.13,.34,[3.0,3.5,3.9])];
-  function allocate(){const scale=Math.min(1,850/displayWidth)*quality;width=Math.max(1,Math.round(displayWidth*scale));height=Math.max(1,Math.round(displayHeight*scale));canvas.width=width;canvas.height=height;image=ctx.createImageData(width,height);depth=new Float32Array(width*height);owner=new Uint16Array(width*height);world=new Float32Array(width*height*3);normalBuffer=new Float32Array(width*height*3);uvBuffer=new Float32Array(width*height*2);}
+  function allocate(){const scale=Math.min(1,850/displayWidth)*quality;width=Math.max(1,Math.round(displayWidth*scale));height=Math.max(1,Math.round(displayHeight*scale));canvas.width=width;canvas.height=height;image=ctx.createImageData(width,height);depth=new Float32Array(width*height);owner=new Uint16Array(width*height);world=new Float32Array(width*height*3);normalBuffer=new Float32Array(width*height*3);uvBuffer=new Float32Array(width*height*2);colorBuffer=new Float32Array(width*height*3);}
   function materialId(m){
     if(materialIds.has(m))return materialIds.get(m);const id=materials.length;materialIds.set(m,id);
-    materials.push({source:m,color:[m.color.r,m.color.g,m.color.b],rough:Math.max(.045,m.roughness??.6),metal:m.metalness||0,coat:m.clearcoat||0,basic:!!m.isMeshBasicMaterial,tex:m.map&&m.map.userData.pixels,surface:m.userData.softwareSurface,metalRough:m.userData.metalRoughPixels,emissive:m.emissive?[m.emissive.r*(m.emissiveIntensity??1),m.emissive.g*(m.emissiveIntensity??1),m.emissive.b*(m.emissiveIntensity??1)]:[0,0,0]});return id;
+    materials.push({source:m,color:[m.color.r,m.color.g,m.color.b],rough:Math.max(.045,m.roughness??.6),metal:m.metalness||0,coat:m.clearcoat||0,basic:!!m.isMeshBasicMaterial,vertexColors:!!m.vertexColors,roughMin:m.userData.roughnessMin??.045,roughMax:m.userData.roughnessMax??1,tex:m.map&&m.map.userData.pixels,surface:m.userData.softwareSurface,metalRough:m.userData.metalRoughPixels,emissive:m.emissive?[m.emissive.r*(m.emissiveIntensity??1),m.emissive.g*(m.emissiveIntensity??1),m.emissive.b*(m.emissiveIntensity??1)]:[0,0,0]});return id;
   }
   function project(source,destination,matrix,w,h){
     const e=matrix.elements;
@@ -30,7 +30,7 @@ function createCompanionSoftwareRenderer(T,canvas){
     if(minX>maxX||minY>maxY)return;
     const den=(y1-y2)*(x0-x2)+(x2-x1)*(y0-y2),dx0=(y1-y2)/den,dy0=(x2-x1)/den,dx1=(y2-y0)/den,dy1=(x0-x2)/den;
     let row0=((y1-y2)*(minX+.5-x2)+(x2-x1)*(minY+.5-y2))/den,row1=((y2-y0)*(minX+.5-x2)+(x0-x2)*(minY+.5-y2))/den;
-    const p=record.world,n=record.normals,uv=record.geometry.attributes.uv,flip=area>=0?-1:1;
+    const p=record.world,n=record.normals,uv=record.geometry.attributes.uv,colors=record.geometry.attributes.color,flip=area>=0?-1:1;
     for(let yy=minY;yy<=maxY;yy++){
       let b0=row0,b1=row1;
       for(let xx=minX;xx<=maxX;xx++){
@@ -44,6 +44,7 @@ function createCompanionSoftwareRenderer(T,canvas){
               owner[at]=id;
               for(let k=0;k<3;k++){world[o+k]=q0*p[ia*3+k]+q1*p[ib*3+k]+q2*p[ic*3+k];normalBuffer[o+k]=flip*(q0*n[ia*3+k]+q1*n[ib*3+k]+q2*n[ic*3+k]);}
               if(uv){uvBuffer[at*2]=q0*uv.getX(ia)+q1*uv.getX(ib)+q2*uv.getX(ic);uvBuffer[at*2+1]=q0*uv.getY(ia)+q1*uv.getY(ib)+q2*uv.getY(ic);}else{uvBuffer[at*2]=uvBuffer[at*2+1]=0;}
+              if(colors){colorBuffer[o]=q0*colors.getX(ia)+q1*colors.getX(ib)+q2*colors.getX(ic);colorBuffer[o+1]=q0*colors.getY(ia)+q1*colors.getY(ib)+q2*colors.getY(ic);colorBuffer[o+2]=q0*colors.getZ(ia)+q1*colors.getZ(ib)+q2*colors.getZ(ic);}
             }
           }
         }
@@ -69,6 +70,7 @@ function createCompanionSoftwareRenderer(T,canvas){
       const id=owner[at];if(!id)continue;const m=materials[id],o=at*3,x=world[o],y=world[o+1],z=world[o+2];
       let nx=normalBuffer[o],ny=normalBuffer[o+1],nz=normalBuffer[o+2],nl=Math.hypot(nx,ny,nz)||1;nx/=nl;ny/=nl;nz/=nl;
       let ar=m.color[0],ag=m.color[1],ab=m.color[2],rough=m.rough,metal=m.metal,ti=0;
+      if(m.vertexColors){ar*=colorBuffer[o];ag*=colorBuffer[o+1];ab*=colorBuffer[o+2];}
       if(m.tex){
         const tex=m.tex,u=uvBuffer[at*2],v=uvBuffer[at*2+1],fx=(u-Math.floor(u))*(tex.width-1),fy=(tex.flipY===false ? v-Math.floor(v) : 1-v+Math.floor(v))*(tex.height-1),ix=Math.floor(fx),iy=Math.floor(fy),dx=fx-ix,dy=fy-iy;
         const p0=(iy*tex.width+ix)*4,p1=(iy*tex.width+Math.min(tex.width-1,ix+1))*4,p2=(Math.min(tex.height-1,iy+1)*tex.width+ix)*4,p3=(Math.min(tex.height-1,iy+1)*tex.width+Math.min(tex.width-1,ix+1))*4;
@@ -83,6 +85,7 @@ function createCompanionSoftwareRenderer(T,canvas){
           nx+=gx*tx+gy*bx;ny+=gy*by;nz+=gx*tz+gy*bz;nl=Math.hypot(nx,ny,nz)||1;nx/=nl;ny/=nl;nz/=nl;
         }
       }
+      rough=Math.max(m.roughMin,Math.min(m.roughMax,rough));
       let cr=0,cg=0,cb=0;
       if(m.basic){cr=ar;cg=ag;cb=ab;}else{
         let vx=cp[12]-x,vy=cp[13]-y,vz=cp[14]-z;const vl=Math.hypot(vx,vy,vz)||1;vx/=vl;vy/=vl;vz/=vl;const nv=Math.max(.001,nx*vx+ny*vy+nz*vz);

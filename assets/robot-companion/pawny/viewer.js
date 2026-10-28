@@ -20,8 +20,8 @@
       for(const [w,h,rgb,pos]of [[2.5,4.5,[3.8,3.6,3.3],[-3,3.5,5]],[1.4,3.5,[2.2,2.5,2.7],[4,1.8,4.7]],[4,4,[.8,.9,.85],[0,6,0]]]){const p=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({color:new T.Color().setRGB(...rgb),side:T.DoubleSide,toneMapped:false}));p.position.set(...pos);p.lookAt(0,0,0);studio.add(p);}
       const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(studio,.04,.1,40).texture;pmrem.dispose();studio.traverse(o=>{if(o.isMesh){o.geometry.dispose();o.material.dispose();}});
     }
-    const response=await fetch('assets/robot-companion/pawny/character.glb');if(!response.ok)throw Error('The character file could not load. Please refresh the page.');
-    const rig=await createImportedCompanion(T,await response.arrayBuffer(),{createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;}});scene.add(rig.root);
+    const response=await fetch('assets/robot-companion/pawny/character-refined.glb');if(!response.ok)throw Error('The character file could not load. Please refresh the page.');
+    const rig=await createImportedCompanion(T,await response.arrayBuffer(),{anisotropy:engine==='webgl'?Math.min(8,renderer.capabilities.getMaxAnisotropy()):1,createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;}});scene.add(rig.root);root.dataset.handRevision=rig.source.handRepair?'rebuilt-v2':'source';root.dataset.materialGroups=String(rig.mesh.geometry.groups.length);
     const reduced=window.matchMedia('(prefers-reduced-motion:reduce)'),clock=()=>performance.now()/1000;
     const state={idle:!reduced.matches,pointer:false,yaw:0,pitch:0,desiredYaw:0,desiredPitch:0,helloAt:reduced.matches?-100:clock()+.6,hopAt:-100,turnAt:-100,last:clock(),lastDraw:0,lastPointer:0,frames:0,dirty:true};
     const ndc=new T.Vector2(),ray=new T.Raycaster(),plane=new T.Plane(new T.Vector3(0,0,1),-1.6),target=new T.Vector3();
@@ -38,7 +38,7 @@
       if(hop>=0&&hop<.9){lift=.17*Math.sin(Math.PI*hop/.9);action='hop';}
       if(turn>=0&&turn<2.3){rotation=Math.PI*2*ease(turn/2.3);action='turn';}
       rig.setPose({yaw:state.yaw,pitch:state.pitch+nod,roll,hop:lift,turn:rotation});
-      if(engine==='software-3d')renderer.setQuality(activeAt(now)||now-state.lastPointer<.3?.72:1);
+      if(engine==='software-3d')renderer.setQuality(activeAt(now)||now-state.lastPointer<.3?.88:1);
       renderer.render(scene,camera);state.frames++;state.lastDraw=performance.now();
       root.dataset.ready='true';root.dataset.engine=engine;root.dataset.headYaw=state.yaw.toFixed(4);root.dataset.headPitch=state.pitch.toFixed(4);root.dataset.action=action;root.dataset.turn=rotation.toFixed(4);root.dataset.hop=lift.toFixed(4);root.dataset.frames=String(state.frames);root.dataset.triangles=String(rig.triangleCount);root.dataset.rigJoints='2';
       state.dirty=Math.abs(y-state.yaw)+Math.abs(p-state.pitch)>.0003;
