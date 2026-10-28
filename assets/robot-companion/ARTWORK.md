@@ -1,0 +1,15 @@
+# Robot companion artwork and motion
+
+The character was generated with the built-in image-generation tool from two user-supplied character references. The reference photographs are not included in the public repository.
+
+The interactive page uses the resulting transparent character artwork in separate head, body and arm layers. Pointer position controls a gently eased head turn. There are blinks, a wave and a happy hop. The Pause control stops the animation; reduced-motion preferences start the page paused. The artwork is a 3D-style render, animated as image layers rather than a 3D model.
+
+The GitHub profile uses a script-free, transparent SVG loop with the same character. Pointer tracking runs on the linked interactive page because GitHub sanitizes scripts from READMEs and images do not receive page mouse events.
+
+## Character prompt
+
+Use case: stylized-concept. Create one transparent full-body character asset, a cuter version of the tiny robot in BOTH attached reference photos. Treat those as identity and material references, not backgrounds. Preserve its recognizable overlapping weathered red/copper tiled pointed cap, mossy olive-green round metal face, very large warm amber glass eyes, tiny red armor body, short legs and small articulated hands. Make it more adorable: an oversized rounded head, softer cheeks, bright affectionate eyes with generous catchlights, a tiny gentle closed smile, a tiny button nose, and short rounded proportions. Retain tactile lightly worn metal and the distinctive cap construction, but soften the grimy/scratched appearance. High quality cinematic 3D character render with soft studio light and clear silhouette; not flat vector art, not pixel art, not a human wearing armor. Front-facing orthographic-ish camera, head straight and level so it can be animated to look around. Entire assembled character visible from pointed cap to toes. Head and cap together about 62% of character height, tiny body below. Show a small clear narrow neck between head and torso. Both arms relaxed down and slightly away from the torso with clear transparent gaps, each hand fully visible and fingers together. Feet slightly separated. Centered character on a genuinely transparent background with generous clear margins; no desert, floor, shadow plane, scenery, other characters, props, text, badges, UI or watermark. Deliver a single fully assembled character, NOT a sprite sheet or a character turnaround.
+
+## Blink prompt
+
+Edit the supplied transparent robot character for one blink frame. Change ONLY the two eyes inside their existing amber metal rims: close both eyelids into a gentle happy blink, with softly curved olive-green metal eyelids matching the face texture. Preserve the amber eye rims. Everything else must stay exactly the same: same character identity, cap shape and copper tiles, smile, face, body, limbs, pose, proportions, lighting, full-body framing, canvas size, margins and transparent alpha background. Do not move or resize any feature. This is an aligned alternate expression for animation, not a redesign. No text, scenery or other objects.
