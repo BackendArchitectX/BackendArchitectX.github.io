@@ -60,7 +60,12 @@
     #rc-app .rc-left-arm {z-index:2;transform-origin:36.9% 62.7%;clip-path:polygon(37.6% 58.8%,40.9% 62.6%,38.9% 64.8%,37.9% 67%,36.7% 68.8%,34.9% 73.5%,31.7% 76.9%,31.9% 79.4%,32.8% 81.7%,30.7% 84.9%,26.8% 86.4%,22.9% 84.7%,21.3% 81.6%,22.4% 78.3%,23.9% 73.8%,27% 69.9%,30.3% 66.9%,33.1% 65%,32.1% 62.5%,33.2% 59.3%);}
     #rc-app .rc-head {z-index:3;transform-origin:50% 58.7%;clip-path:polygon(0 0,100% 0,100% 68.3%,76.6% 68.3%,76.6% 60.6%,72% 60.6%,72% 58.7%,28.6% 58.7%,28.6% 60.6%,26.8% 60.6%,26.8% 68.4%,0 68.4%);will-change:transform;}
     #rc-app .rc-right-arm {z-index:4;transform-origin:63.1% 62.7%;clip-path:polygon(62.4% 58.8%,59.1% 62.6%,61.1% 64.8%,62.1% 67%,63.3% 68.8%,65.1% 73.5%,68.3% 76.9%,68.1% 79.4%,67.2% 81.7%,69.3% 84.9%,73.2% 86.4%,77.1% 84.7%,78.7% 81.6%,77.6% 78.3%,76.1% 73.8%,73% 69.9%,69.7% 66.9%,66.9% 65%,67.9% 62.5%,66.8% 59.3%);will-change:transform;}
-    #rc-app .rc-eyelids {position:absolute;inset:0;opacity:0;}
+    #rc-app .rc-head {transition:transform .18s cubic-bezier(.2,.7,.2,1);}
+    #rc-app .rc-right-arm {animation:rc-idle-wave 12s ease-in-out infinite;}
+    #rc-app .rc-right-arm.is-waving {animation:rc-wave 1.55s ease-in-out 1;}
+    #rc-app .rc-rig {animation:rc-breathe 4s ease-in-out infinite;}
+    #rc-app .rc-rig.is-hopping {animation:rc-hop .82s ease-in-out 1;}
+    #rc-app .rc-eyelids {position:absolute;inset:0;opacity:0;animation:rc-blink 4.35s linear infinite;}
     #rc-app .rc-eye-left {clip-path:ellipse(9.2% 6.1% at 37.9% 39.2%);}
     #rc-app .rc-eye-right {clip-path:ellipse(9% 6.4% at 64.1% 37.2%);}
     #rc-app .rc-anchor {position:absolute;left:50%;top:38%;width:0;height:0;pointer-events:none;}
@@ -72,6 +77,13 @@
     #rc-app .rc-status {font-size:12px;color:var(--rc-muted);margin-left:auto;min-height:20px;}
     #rc-app .rc-caption {text-align:center;color:var(--rc-muted);font-size:12px;margin:16px 8px 0;}
     #rc-app .rc-mobile-stack {display:none;}
+    #rc-app[data-motion="paused"] .rc-rig,#rc-app[data-motion="paused"] .rc-right-arm,#rc-app[data-motion="paused"] .rc-eyelids {animation-play-state:paused;}
+    @keyframes rc-idle-wave {0%,5%,21%,100%{transform:rotate(0deg)}8%{transform:rotate(-99deg)}10%{transform:rotate(-111deg)}12%{transform:rotate(-87deg)}14%{transform:rotate(-109deg)}16%{transform:rotate(-89deg)}18%{transform:rotate(-99deg)}}
+    @keyframes rc-wave {0%,100%{transform:rotate(0deg)}17%{transform:rotate(-99deg)}31%{transform:rotate(-111deg)}43%{transform:rotate(-87deg)}56%{transform:rotate(-109deg)}69%{transform:rotate(-89deg)}79%{transform:rotate(-99deg)}}
+    @keyframes rc-hop {0%,100%{transform:translateY(0) scale(1,1)}15%{transform:translateY(3px) scale(1.025,.96)}47%{transform:translateY(-28px) scale(1,1)}83%{transform:translateY(0) scale(1.02,.97)}}
+    @keyframes rc-breathe {0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+    @keyframes rc-blink {0%,70%,76%,100%{opacity:0}72%,74%{opacity:1}}
+    @media(prefers-reduced-motion:reduce){#rc-app:not([data-motion="playing"]) .rc-rig,#rc-app:not([data-motion="playing"]) .rc-right-arm,#rc-app:not([data-motion="playing"]) .rc-eyelids {animation:none;}}
     @media(max-width:700px) {
       #rc-app .rc-body {grid-template-columns:minmax(0,1fr) 225px;gap:6px;padding:16px 21px 6px;}
       #rc-app .rc-stage {min-height:300px;padding:12px 0 8px;}
@@ -142,28 +154,27 @@
       const pauseButton = root.querySelector('[data-action="pause"]');
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
       const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
-      const smooth = value => {const x=clamp(value,0,1);return x*x*(3-2*x);};
       let paused = reduced.matches;
-      let targetX=0,targetY=0,lookX=0,lookY=0;
-      let pointerAt=0,last=0,time=0,waveAt=.6,hopAt=-100;
-      let nextWave=12;
-      let raf=0;
       function pointer(event) {
         if(paused) return;
         const p=anchor.getBoundingClientRect();
         const reach=Math.max(180,Math.min(400,root.getBoundingClientRect().width*.55));
-        targetX=clamp((event.clientX-p.x)/reach,-1,1);
-        targetY=clamp((event.clientY-p.y)/reach,-1,1);
-        pointerAt=time;
+        const x=clamp((event.clientX-p.x)/reach,-1,1);
+        const y=clamp((event.clientY-p.y)/reach,-1,1);
+        head.style.transform='rotateX('+(-y*11).toFixed(2)+'deg) rotateY('+(x*19).toFixed(2)+'deg) rotateZ('+(x*3.4).toFixed(2)+'deg)';
+        root.dataset.lookX=x.toFixed(2);root.dataset.lookY=y.toFixed(2);
         root.dataset.tracking='pointer';
       }
       window.addEventListener('pointermove',pointer,{passive:true});
-      document.documentElement.addEventListener('pointerleave',()=>{targetX=0;targetY=0;pointerAt=-10;root.dataset.tracking='idle';});
-      function wave(){if(paused)return;waveAt=time;status.textContent='Hello there!';}
-      function hop(){if(paused)return;hopAt=time;status.textContent='Happy to see you.';}
+      document.documentElement.addEventListener('pointerleave',()=>{if(!paused)head.style.transform='rotateX(0deg) rotateY(0deg) rotateZ(0deg)';root.dataset.tracking='idle';});
+      function restart(element,klass,action){element.classList.remove(klass);void element.offsetWidth;element.classList.add(klass);root.dataset.action=action;}
+      function wave(){if(paused)return;restart(arm,'is-waving','wave');status.textContent='Hello there!';}
+      function hop(){if(paused)return;restart(rig,'is-hopping','hop');status.textContent='Happy to see you.';}
       waveButton.addEventListener('click',wave);
       hopButton.addEventListener('click',hop);
       character.addEventListener('click',hop);
+      arm.addEventListener('animationend',event=>{if(event.animationName==='rc-wave'){arm.classList.remove('is-waving');root.dataset.action='idle';}});
+      rig.addEventListener('animationend',event=>{if(event.animationName==='rc-hop'){rig.classList.remove('is-hopping');root.dataset.action='idle';}});
       function pauseState() {
         pauseButton.textContent=paused?'Resume motion':'Pause motion';
         pauseButton.setAttribute('aria-pressed',String(paused));
@@ -173,52 +184,14 @@
         status.textContent=paused?'Motion paused.':'A little curious.';
       }
       function setPaused(value) {
+        if(value){head.style.transform=getComputedStyle(head).transform;head.style.transition='none';}
+        else head.style.transition='';
         paused=value;pauseState();
-        if(paused){cancelAnimationFrame(raf);raf=0;last=0;}
-        else if(!raf){last=0;raf=requestAnimationFrame(frame);}
       }
       pauseButton.addEventListener('click',()=>setPaused(!paused));
       reduced.addEventListener('change',event=>setPaused(event.matches));
-      document.addEventListener('visibilitychange',()=>{
-        if(document.hidden){cancelAnimationFrame(raf);raf=0;last=0;}
-        else if(!paused&&!raf){raf=requestAnimationFrame(frame);}
-      });
-      function frame(now) {
-        if(paused){raf=0;return;}
-        const dt=last?Math.min((now-last)/1000,.05):1/60;last=now;time+=dt;
-        const attentive=time-pointerAt<5;
-        if(!attentive){targetX=Math.sin(time*.55)*.2;targetY=Math.sin(time*.7)*.08;root.dataset.tracking='idle';}
-        const ease=1-Math.exp(-dt*9);
-        lookX+=(targetX-lookX)*ease;lookY+=(targetY-lookY)*ease;
-        const idleTilt=attentive?0:Math.sin(time*.8)*1.3;
-        head.style.transform='rotateX('+(-lookY*11).toFixed(2)+'deg) rotateY('+(lookX*19).toFixed(2)+'deg) rotateZ('+(lookX*3.4+idleTilt).toFixed(2)+'deg)';
-        root.dataset.lookX=lookX.toFixed(2);root.dataset.lookY=lookY.toFixed(2);
-        const wt=time-waveAt;
-        let angle=0;
-        if(wt>=0&&wt<1.55){
-          if(wt<.25)angle=-99*smooth(wt/.25);
-          else if(wt<1.15)angle=-99+12*Math.sin((wt-.25)*Math.PI*6);
-          else angle=-99*(1-smooth((wt-1.15)/.4));
-        }
-        arm.style.transform='rotate('+angle.toFixed(2)+'deg)';
-        root.dataset.action=wt>=0&&wt<1.55?'wave':'idle';
-        if(time>nextWave&&!attentive){waveAt=time;nextWave=time+13;}
-        const ht=time-hopAt;
-        let y=Math.sin(time*1.8)*.6,sx=1,sy=1;
-        if(ht>=0&&ht<.82){
-          root.dataset.action='hop';
-          if(ht<.13){const c=Math.sin(ht/.13*Math.PI);sy=1-.045*c;sx=1+.025*c;y+=3*c;}
-          else if(ht<.68){const p=(ht-.13)/.55;y-=28*4*p*(1-p);}
-          else {const c=Math.sin((ht-.68)/.14*Math.PI);sy=1-.03*c;sx=1+.02*c;}
-        }
-        rig.style.transform='translateY('+y.toFixed(2)+'px) scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
-        const blink=(time+1.1)%4.35;
-        lids.style.opacity=blink<.22?Math.sin(blink/.22*Math.PI).toFixed(3):'0';
-        raf=requestAnimationFrame(frame);
-      }
       pauseState();
       root.dataset.tracking='idle';
-      if(!paused)raf=requestAnimationFrame(frame);
     })();
   </script>
 </section>
