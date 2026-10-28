@@ -70,7 +70,7 @@ function createCompanionModel(T, options = {}) {
   }
   const olive=textureSet(0,0),red=textureSet(1,0),brass=textureSet(0,1),rubber=textureSet(1,1);
   const materials={
-    face:new T.MeshStandardMaterial({color:olive.map?'#bac5a2':'#777955',...olive,roughness:.80,metalness:.30,bumpScale:.013,envMapIntensity:.65}),
+    face:new T.MeshStandardMaterial({color:olive.map?'#e2e8ce':'#777955',...olive,roughness:.80,metalness:.30,bumpScale:.013,envMapIntensity:.65}),
     joint:new T.MeshStandardMaterial({color:rubber.map?'#a3a6a0':'#272923',...rubber,roughness:.86,metalness:.20,bumpScale:.007}),
     bronze:new T.MeshStandardMaterial({color:brass.map?'#c6bca7':'#806b43',...brass,roughness:.59,metalness:.78,bumpScale:.005}),
     edge:new T.MeshStandardMaterial({color:brass.map?'#8a8070':'#685841',...brass,roughness:.70,metalness:.58,bumpScale:.006}),
@@ -246,7 +246,7 @@ function createCompanionSoftwareRenderer(T, canvas) {
   return {
     domElement:canvas,
     setPixelRatio(){},
-    setSize(w,h){const scale=Math.min(1,720/w);width=Math.round(w*scale);height=Math.round(h*scale);canvas.width=width;canvas.height=height;image=ctx.createImageData(width,height);depth=new Float32Array(width*height);},
+    setSize(w,h){const scale=Math.min(1,900/w);width=Math.round(w*scale);height=Math.round(h*scale);canvas.width=width;canvas.height=height;image=ctx.createImageData(width,height);depth=new Float32Array(width*height);},
     render(scene,camera){
       scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);
       vp.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
@@ -263,7 +263,7 @@ function createCompanionSoftwareRenderer(T, canvas) {
         for(let i=0;i<positions.count;i++){
           vertex.fromBufferAttribute(positions,i).applyMatrix4(object.matrixWorld).applyMatrix4(vp);
           screen[i*3]=(vertex.x*.5+.5)*width;screen[i*3+1]=(-vertex.y*.5+.5)*height;screen[i*3+2]=vertex.z;
-          if(normals){normal.fromBufferAttribute(normals,i).applyMatrix3(normalMatrix).normalize();lights[i]=.25+.72*Math.max(0,normal.dot(light))+.13*Math.max(0,normal.dot(fill));specular[i]=Math.max(0,normal.dot(halfway));}else lights[i]=.8;
+          if(normals){normal.fromBufferAttribute(normals,i).applyMatrix3(normalMatrix).normalize();lights[i]=.38+.78*Math.max(0,normal.dot(light))+.14*Math.max(0,normal.dot(fill));specular[i]=Math.max(0,normal.dot(halfway));}else lights[i]=.8;
           if(colors)lights[i]*=colors.getX(i);
         }
         const count=index?index.count:positions.count;
@@ -302,10 +302,13 @@ function createCompanionSoftwareRenderer(T, canvas) {
                     depth[at]=zz;const pixel=at*4;
                     if(tex&&uv){
                       const u=w0*ua+w1*ub+w2*uc,v=w0*va+w1*vb+w2*vc;
-                      const tx=Math.min(tex.width-1,Math.floor((u-Math.floor(u))*tex.width)),ty=Math.min(tex.height-1,Math.floor((1-v+Math.floor(v))*tex.height));
-                      const ti=(ty*tex.width+tx)*4,lum=w0*lights[a/3]+w1*lights[b/3]+w2*lights[c/3];
+                      const fx=(u-Math.floor(u))*(tex.width-1),fy=(1-v+Math.floor(v))*(tex.height-1),tx=Math.floor(fx),ty=Math.floor(fy),dx=fx-tx,dy=fy-ty;
+                      const ti=(ty*tex.width+tx)*4,tx1=Math.min(tex.width-1,tx+1)*4,ty1=Math.min(tex.height-1,ty+1)*tex.width*4,lum=(w0*lights[a/3]+w1*lights[b/3]+w2*lights[c/3])*1.13;
                       const reflection=255*shine*Math.pow(w0*specular[a/3]+w1*specular[b/3]+w2*specular[c/3],shininess);
-                      for(let k=0;k<3;k++)pixels[pixel+k]=Math.min(255,tex.data[ti+k]*rgb[k]/255*lum+reflection);
+                      for(let k=0;k<3;k++){
+                        const sample=(tex.data[ti+k]*(1-dx)+tex.data[ty*tex.width*4+tx1+k]*dx)*(1-dy)+(tex.data[ty1+tx*4+k]*(1-dx)+tex.data[ty1+tx1+k]*dx)*dy;
+                        pixels[pixel+k]=Math.min(255,sample*rgb[k]/255*lum+reflection);
+                      }
                     }else{pixels[pixel]=w0*ca[0]+w1*cb[0]+w2*cc[0];pixels[pixel+1]=w0*ca[1]+w1*cb[1]+w2*cc[1];pixels[pixel+2]=w0*ca[2]+w1*cb[2]+w2*cc[2];}
                     pixels[pixel+3]=255;
                   }

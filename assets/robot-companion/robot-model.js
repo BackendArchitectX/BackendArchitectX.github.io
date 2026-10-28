@@ -22,7 +22,7 @@ function createCompanionModel(T, options = {}) {
   }
   const olive=textureSet(0,0),red=textureSet(1,0),brass=textureSet(0,1),rubber=textureSet(1,1);
   const materials={
-    face:new T.MeshStandardMaterial({color:olive.map?'#bac5a2':'#777955',...olive,roughness:.80,metalness:.30,bumpScale:.013,envMapIntensity:.65}),
+    face:new T.MeshStandardMaterial({color:olive.map?'#e2e8ce':'#777955',...olive,roughness:.80,metalness:.30,bumpScale:.013,envMapIntensity:.65}),
     joint:new T.MeshStandardMaterial({color:rubber.map?'#a3a6a0':'#272923',...rubber,roughness:.86,metalness:.20,bumpScale:.007}),
     bronze:new T.MeshStandardMaterial({color:brass.map?'#c6bca7':'#806b43',...brass,roughness:.59,metalness:.78,bumpScale:.005}),
     edge:new T.MeshStandardMaterial({color:brass.map?'#8a8070':'#685841',...brass,roughness:.70,metalness:.58,bumpScale:.006}),
