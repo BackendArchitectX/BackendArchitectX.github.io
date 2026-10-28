@@ -411,7 +411,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports={createCompanionSo
       const time=(now-started)/1000;
       if(state.idle&&time>7&&Math.floor(time/13)!==Math.floor((state.time||0)/13))state.waveAt=time;
       const active=time-state.waveAt<1.85||time-state.hopAt<.95||time-state.spinAt<2.7;
-      if(!state.idle&&!active)return;
+      if(!state.idle&&!active&&root.dataset.action==='idle')return;
       if(engine==='webgl'||now-lastDraw>65)draw(now);
     }
     if(engine==='webgl')renderer.setAnimationLoop(loop);else{const tick=now=>{loop(now);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
