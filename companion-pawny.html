@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A character preview for Pranay Kadu, using the supplied textured 3D asset, with pointer-driven head movement and a friendly greeting.">
+  <title>Pranay Kadu · Character preview</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#e6edf3;background:#0d1117}
+    *{box-sizing:border-box}body{margin:0}.shell{max-width:1050px;margin:0 auto;padding:24px 24px 30px}
+    nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;font-size:13px;min-height:38px}a{color:#9da7b3;text-decoration:none}a:hover{color:#e6edf3;text-decoration:underline}nav a:first-child{margin-right:auto}
+    header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:22px;padding-bottom:14px;border-bottom:1px solid #212833}h1{font-size:19px;font-weight:500;letter-spacing:-.3px;margin:0}header span{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;color:#8b949e}
+    .stage{height:560px;position:relative;width:100%;isolation:isolate}.stage canvas{display:block;width:100%;height:100%;touch-action:pan-y}.stage canvas:focus-visible{outline:2px solid #a3b89a;outline-offset:-4px;border-radius:8px}
+    #loading{position:absolute;top:46%;left:0;right:0;text-align:center;color:#9da7b3;font-size:13px;pointer-events:none}[hidden]{display:none!important}
+    .controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}button{min-height:42px;border:1px solid #303942;border-radius:7px;background:#151b23;color:#dce4ec;font-family:inherit;font-size:13px;padding:10px 16px;cursor:pointer}button:hover{background:#1c2530;border-color:#4b5865}button:focus-visible{outline:2px solid #a3b89a;outline-offset:3px}button:disabled{opacity:.45;cursor:wait}
+    .hint{margin:17px 0 0;text-align:center;color:#939da9;font-size:13px}.status{min-height:22px;margin:8px 0 0;text-align:center;color:#bdcfa4;font:12px ui-monospace,SFMono-Regular,Consolas,monospace}.credit{margin:26px 0 0;color:#74808e;text-align:center;font-size:11px}
+    @media(max-width:600px){.shell{padding:14px 12px 24px}header{margin-top:15px}.stage{height:480px}nav{gap:14px}.controls{gap:7px}button{padding:10px 12px;min-height:44px}.hint{line-height:1.5}}
+  </style>
+</head>
+<body>
+<main class="shell" id="pawny-companion" data-source="uploaded-trellis-glb" data-eye-rig="absent" data-transformation-rig="absent">
+  <nav aria-label="Preview navigation"><a href="/">← Engineering portfolio</a><a href="https://github.com/BackendArchitectX">GitHub profile</a></nav>
+  <header><h1>A little curious.</h1><span>Pranay Kadu / character preview</span></header>
+  <div class="stage"><canvas role="img" aria-label="A textured copper-armoured character. Move your pointer to turn its head, or use the greeting and hop buttons."></canvas><span id="loading" role="status">Loading your character…</span></div>
+  <div class="controls" aria-label="Character actions"><button type="button" data-action="hello" disabled>Say hello</button><button type="button" data-action="hop" disabled>Little hop</button><button type="button" data-action="turn" disabled>Turn around</button><button type="button" data-action="idle" disabled aria-pressed="false">Pause idle</button></div>
+  <p class="hint">Move your pointer anywhere on the page. Tap the character for a little hop.</p>
+  <p class="status" aria-live="polite">Preparing the character.</p>
+  <p class="credit">Character: Pawny · User-supplied asset generated with TRELLIS.2</p>
+</main>
+<script src="assets/robot-companion/three.r160.min.js"></script>
+<script src="assets/robot-companion/pawny/character-loader.js"></script>
+<script src="assets/robot-companion/pawny/software-renderer.js"></script>
+<script src="assets/robot-companion/pawny/viewer.js"></script>
+</body>
+</html>
