@@ -381,7 +381,8 @@ if(typeof module!=='undefined'&&module.exports)module.exports={createCompanionSo
       const p=poseCompanionModel(T,model,state);renderer.render(scene,camera);lastDraw=now;frames++;
       root.dataset.ready='true';root.dataset.engine=engine;root.dataset.headYaw=p.yaw.toFixed(3);root.dataset.headPitch=p.pitch.toFixed(3);
       root.dataset.eyeLeft=p.gaze[0].y.toFixed(3);root.dataset.eyeRight=p.gaze[1].y.toFixed(3);root.dataset.frames=String(frames);
-      root.dataset.action=p.spin?'spin':p.hop?'hop':p.wave?'wave':'idle';loading.hidden=true;
+      root.dataset.action=p.spin?'spin':p.hop?'hop':p.wave?'wave':'idle';
+      root.dataset.modelTime=state.time.toFixed(3);root.dataset.armAngle=model.arms[1].node.rotation.z.toFixed(3);root.dataset.turnAngle=model.root.rotation.y.toFixed(3);loading.hidden=true;
     }
     function resize(){const rect=stage.getBoundingClientRect();renderer.setSize(Math.max(1,rect.width),Math.max(1,rect.height),false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();draw(performance.now());}
     new ResizeObserver(resize).observe(stage);
