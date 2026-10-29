@@ -6,7 +6,7 @@ The derived GLB adds Body and Head joints with a smooth neck transition. The ori
 
 The preview implements independent eye tracking and blinking, gentle head tracking, a greeting nod, a whole-body hop and a turn. It does not implement walking, waving or capsule unfolding.
 
-The original uploaded asset is retained unchanged. No reference photographs are included in this directory. The profile README, portfolio homepage and earlier companion pages are unchanged by this preview.
+The original uploaded asset is retained unchanged. No reference photographs are included in this directory. The current character is used by both `companion-pawny.html` and the main `companion.html` page. The profile's professional text and the portfolio homepage remain unchanged.
 
 Geometry preparation uses the MIT-licensed meshoptimizer simplifier, with strong UV preservation. Runtime uses the existing MIT-licensed Three.js r160 bundle. `character-loader.js` reads this known GLB layout and assembles the source rig plus the runtime eye details. `software-renderer.js` rasterizes the same 3D geometry, eye rotations, eyelid deformation and head motion onto a transparent canvas when WebGL is unavailable. It preserves texture orientation and the metallic/roughness map channels.
 
@@ -33,3 +33,5 @@ The current runtime revision opens the eyes slightly, enlarges the irises and pu
 `hand-relaxed.json` contains two new four-digit hand meshes. The raised hand has shorter fingers, a clearer opposable thumb and a wrist angle that follows the supplied reference more horizontally across the chest. The three long fingertip pads are positioned against the actual armour surface with a small clearance. The hanging hand replaces the fused pointed source shape with a cupped palm and softly curled fingers. Both meshes are single connected, closed surfaces with consistent outward winding.
 
 The hand colours retain mottled albedo sampled from the supplied character's cheek texture. Skin relief, knuckles and shallow creases are part of the geometry and vertex colour, rather than a uniform glove colour. The old raised-hand primitive and hanging-hand region are removed from the runtime body mesh. The existing source GLB is retained unchanged. `Hand view` provides a close-up of the raised hand; it is mutually exclusive with `Face view`.
+
+The GitHub profile header contains a five-second loop rendered from this same rig, including its relaxed hands. The SVG embeds a transparent WebP sprite sheet and preserves the terminal text, light/dark colour rules and reduced-motion still. The README links to the main companion page for live pointer interaction.
