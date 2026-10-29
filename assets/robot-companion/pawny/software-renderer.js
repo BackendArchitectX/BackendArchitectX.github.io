@@ -127,11 +127,14 @@ function createCompanionSoftwareRenderer(T,canvas){
         let work=object.userData.pbrWork;if(!work||work.world.length!==p.count*3)work=object.userData.pbrWork={world:new Float32Array(p.count*3),normals:new Float32Array(p.count*3),screen:new Float32Array(p.count*4),shadow:new Float32Array(p.count*4)};
         const e=object.matrixWorld.elements;normalMatrix.getNormalMatrix(object.matrixWorld);const nm=normalMatrix.elements;
         const pose=object.userData.companionPose,skin=geometry.attributes.skinWeight;
-        const rotation=pose ? new T.Matrix4().makeRotationFromQuaternion(object.skeleton.bones[1].quaternion).elements : null;
+        const articulated=object.userData.articulated,skinIndex=geometry.attributes.skinIndex;
+        const skinMatrices=articulated?object.skeleton.bones.map((b,i)=>new T.Matrix4().multiplyMatrices(object.bindMatrixInverse,new T.Matrix4().multiplyMatrices(b.matrixWorld,object.skeleton.boneInverses[i])).multiply(object.bindMatrix).elements):null;
+        const rotation=pose&&!articulated ? new T.Matrix4().makeRotationFromQuaternion(object.skeleton.bones[1].quaternion).elements : null;
         for(let i=0;i<p.count;i++){
           let x=p.getX(i),y=p.getY(i),z=p.getZ(i),ax=n?n.getX(i):0,ay=n?n.getY(i):0,az=n?n.getZ(i):1;
           const at=i*3;
-          if(pose){const r=rotation,w=skin.getY(i),dx=x,dy=y+.018,dz=z,rx=r[0]*dx+r[4]*dy+r[8]*dz,ry=r[1]*dx+r[5]*dy+r[9]*dz-.018,rz=r[2]*dx+r[6]*dy+r[10]*dz; x+=(rx-x)*w;y+=(ry-y)*w+pose.bodyOffset;z+=(rz-z)*w;const rnx=r[0]*ax+r[4]*ay+r[8]*az,rny=r[1]*ax+r[5]*ay+r[9]*az,rnz=r[2]*ax+r[6]*ay+r[10]*az;ax+=(rnx-ax)*w;ay+=(rny-ay)*w;az+=(rnz-az)*w;}
+          if(articulated){let xx=0,yy=0,zz=0,nx=0,ny=0,nz=0;for(let k=0;k<4;k++){const w=skin.array[i*4+k];if(!w)continue;const m=skinMatrices[skinIndex.array[i*4+k]];xx+=w*(m[0]*x+m[4]*y+m[8]*z+m[12]);yy+=w*(m[1]*x+m[5]*y+m[9]*z+m[13]);zz+=w*(m[2]*x+m[6]*y+m[10]*z+m[14]);nx+=w*(m[0]*ax+m[4]*ay+m[8]*az);ny+=w*(m[1]*ax+m[5]*ay+m[9]*az);nz+=w*(m[2]*ax+m[6]*ay+m[10]*az);}x=xx;y=yy;z=zz;ax=nx;ay=ny;az=nz;}
+          else if(pose){const r=rotation,w=skin.getY(i),dx=x,dy=y+.018,dz=z,rx=r[0]*dx+r[4]*dy+r[8]*dz,ry=r[1]*dx+r[5]*dy+r[9]*dz-.018,rz=r[2]*dx+r[6]*dy+r[10]*dz; x+=(rx-x)*w;y+=(ry-y)*w+pose.bodyOffset;z+=(rz-z)*w;const rnx=r[0]*ax+r[4]*ay+r[8]*az,rny=r[1]*ax+r[5]*ay+r[9]*az,rnz=r[2]*ax+r[6]*ay+r[10]*az;ax+=(rnx-ax)*w;ay+=(rny-ay)*w;az+=(rnz-az)*w;}
           work.world[at]=e[0]*x+e[4]*y+e[8]*z+e[12];work.world[at+1]=e[1]*x+e[5]*y+e[9]*z+e[13];work.world[at+2]=e[2]*x+e[6]*y+e[10]*z+e[14];let nx=nm[0]*ax+nm[3]*ay+nm[6]*az,ny=nm[1]*ax+nm[4]*ay+nm[7]*az,nz=nm[2]*ax+nm[5]*ay+nm[8]*az,len=Math.hypot(nx,ny,nz)||1;work.normals[at]=nx/len;work.normals[at+1]=ny/len;work.normals[at+2]=nz/len;
         }
         project(work.world,work.screen,vp,width,height);project(work.world,work.shadow,shadowVP,shadowSize,shadowSize);return {...work,geometry,object,dynamic:!!object.userData.dynamicEye};
@@ -148,7 +151,7 @@ function createCompanionSoftwareRenderer(T,canvas){
   function restore(){depth.set(staticCache.depth);owner.set(staticCache.owner);world.set(staticCache.world);normalBuffer.set(staticCache.normals);uvBuffer.set(staticCache.uv);colorBuffer.set(staticCache.colors);opacityBuffer.set(staticCache.opacity);shadowDepth.set(staticCache.shadow);image.data.set(staticCache.pixels);}
   function signature(objects,camera){
     let key=width+','+height+':'+camera.projectionMatrix.elements.concat(camera.matrixWorld.elements).map(x=>x.toFixed(5)).join(',');
-    for(const object of objects){const g=object.geometry,pose=object.userData.companionPose;key+='|'+object.uuid+':'+object.matrixWorld.elements.map(x=>x.toFixed(5)).join(',')+':'+g.attributes.position.version+':'+(g.attributes.normal?g.attributes.normal.version:0)+':'+(g.index?g.index.count:0);if(pose)key+=':'+['yaw','pitch','roll','bodyOffset'].map(k=>pose[k].toFixed(5)).join(',');const ms=Array.isArray(object.material)?object.material:[object.material];key+=':'+ms.map(m=>m.uuid+','+m.version).join(';');}
+    for(const object of objects){const g=object.geometry,pose=object.userData.companionPose;key+='|'+object.uuid+':'+object.matrixWorld.elements.map(x=>x.toFixed(5)).join(',')+':'+g.attributes.position.version+':'+(g.attributes.normal?g.attributes.normal.version:0)+':'+(g.index?g.index.count:0);if(object.userData.articulated)key+=':'+Array.from(object.skeleton.boneMatrices,x=>x.toFixed(5)).join(',');if(pose)key+=':'+['yaw','pitch','roll','bodyOffset'].map(k=>pose[k].toFixed(5)).join(',');const ms=Array.isArray(object.material)?object.material:[object.material];key+=':'+ms.map(m=>m.uuid+','+m.version).join(';');}
     return key;
   }
   const renderer={
