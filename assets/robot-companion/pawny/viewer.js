@@ -31,11 +31,11 @@
     if(!rig.detail||rig.detail.eyes.length!==2)throw Error('The eye rig could not load. Please refresh the page.');
     scene.add(rig.root);root.dataset.handRevision=rig.source.handRepair?'rebuilt-v2':'source';root.dataset.eyeRig='independent-3d';root.dataset.materialGroups=String(rig.mesh.geometry.groups.length);
     const reduced=window.matchMedia('(prefers-reduced-motion:reduce)'),clock=()=>performance.now()/1000,start=clock();
-    const state={idle:!reduced.matches,pointer:false,holdHead:false,face:false,yaw:0,pitch:0,desiredYaw:0,desiredPitch:0,helloAt:reduced.matches?-100:start+.6,hopAt:-100,turnAt:-100,blinkAt:-100,nextBlink:start+2.8,idlePhase:-1,last:start,lastDraw:0,frames:0,dirty:true};
+    const state={idle:!reduced.matches,pointer:false,holdHead:true,face:false,yaw:0,pitch:0,desiredYaw:0,desiredPitch:0,helloAt:reduced.matches?-100:start+.6,hopAt:-100,turnAt:-100,blinkAt:-100,blinkPeak:0,nextBlink:start+2.8,idlePhase:-1,last:start,lastDraw:0,frames:0,dirty:true};
     const gazeTarget=new T.Vector3(0,.46,3),target=new T.Vector3(),ndc=new T.Vector2(),ray=new T.Raycaster(),plane=new T.Plane(new T.Vector3(0,0,1),-1.6);
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
-    const blinkClose=engine==='webgl'?.085:.14,blinkOpen=engine==='webgl'?.155:.28;
-    function blinkValue(now){const t=now-state.blinkAt;if(t<0||t>blinkClose+blinkOpen)return 0;return t<blinkClose?smooth(t/blinkClose):1-smooth((t-blinkClose)/blinkOpen);}
+    const blinkClose=engine==='webgl'?.085:.14,blinkHold=engine==='webgl'?.035:.10,blinkOpen=engine==='webgl'?.155:.28;
+    function blinkValue(now){const t=now-state.blinkAt;if(t<0||t>blinkClose+blinkHold+blinkOpen)return 0;if(t<blinkClose)return smooth(t/blinkClose);if(t<blinkClose+blinkHold)return 1;return 1-smooth((t-blinkClose-blinkHold)/blinkOpen);}
     function gestureActive(now){return now>=state.helloAt&&now-state.helloAt<1.7||now-state.hopAt<.9||now-state.turnAt<2.3;}
     function draw(now){
       const dt=Math.min(.25,Math.max(.001,now-state.last));state.last=now;
@@ -51,9 +51,10 @@
       if(turn>=0&&turn<2.3){rotation=Math.PI*2*ease(turn/2.3);action='turn';}
       if(state.holdHead){nod=0;roll=0;}
       rig.setPose({yaw:state.yaw,pitch:state.pitch+nod,roll,hop:lift,turn:rotation});
-      const blink=blinkValue(now),gaze=rig.detail.update({target:gazeTarget,dt,blink});
+      const blink=blinkValue(now),gaze=rig.detail.update({target:gazeTarget,dt,blink});state.blinkPeak=Math.max(state.blinkPeak,blink);
       renderer.render(scene,camera);state.frames++;state.lastDraw=performance.now();
       root.dataset.ready='true';root.dataset.engine=engine;root.dataset.headYaw=state.yaw.toFixed(5);root.dataset.headPitch=(state.pitch+nod).toFixed(5);root.dataset.eyeLeftYaw=gaze.leftYaw.toFixed(5);root.dataset.eyeRightYaw=gaze.rightYaw.toFixed(5);root.dataset.eyeLeftPitch=gaze.leftPitch.toFixed(5);root.dataset.eyeRightPitch=gaze.rightPitch.toFixed(5);root.dataset.blink=blink.toFixed(4);root.dataset.headHeld=String(state.holdHead);root.dataset.action=action;root.dataset.frames=String(state.frames);root.dataset.triangles=String(rig.triangleCount);root.dataset.rigJoints='4';root.dataset.view=state.face?'face':'full';
+      root.dataset.blinkPeak=state.blinkPeak.toFixed(4);
       if(engine==='software-3d'){const stats=renderer.getStats();root.dataset.renderMs=stats.renderMs.toFixed(1);root.dataset.staticReused=String(stats.staticReused);}
       state.dirty=(!state.holdHead&&(Math.abs(desiredYaw-state.yaw)+Math.abs(desiredPitch-state.pitch)>.000025))||gaze.settling||blink>0||gestureActive(now);
       loading.hidden=true;

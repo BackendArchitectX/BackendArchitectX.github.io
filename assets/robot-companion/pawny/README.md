@@ -18,7 +18,7 @@ Organic skin, amber eyes, copper armour, hand and cuff have separate material gr
 
 ## Independent eyes and eyelid finish
 
-The runtime eye pivots turn the actual iris and pupil geometry independently of the head. Eye direction is calculated in each socket's local space so that it compensates for head movement. Eyes respond faster than the smaller head turn; `Hold head` isolates eye movement and `Face view` provides a close-up. Pointer movement and touch movement both update the gaze target.
+The runtime eye pivots turn the actual iris and pupil geometry independently of the head. Eye direction is calculated in each socket's local space so that it compensates for head movement. Eyes-only tracking is the default. `Release head` enables a smaller, slower head turn; `Hold head` isolates eye movement again. `Face view` provides a close-up. Pointer movement and touch movement both update the gaze target.
 
 Upper and lower eyelids deform over the spherical eyes for blinks. Their skin texture is sampled from the supplied model's cheeks, with a feathered outer edge. The old fused iris triangles are retired at runtime, and the old angular socket rim is seated behind the new eyelids. The original uploaded GLB and its two embedded texture files are not overwritten. The new irises have radial colour detail and the corneal layer uses softer studio reflections.
 
