@@ -25,13 +25,15 @@
       const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(studio,.04,.1,40).texture;pmrem.dispose();studio.traverse(o=>{if(o.isMesh){o.geometry.dispose();o.material.dispose();}});
       const floor=new T.Mesh(new T.PlaneGeometry(6,6),new T.ShadowMaterial({color:0x172019,opacity:.13}));floor.rotation.x=-Math.PI/2;floor.position.y=-1.129;floor.receiveShadow=true;scene.add(floor);
     }
-    const response=await fetch('assets/robot-companion/pawny/character-refined.glb');
-    if(!response.ok)throw Error('The character file could not load. Please refresh the page.');
-    const rig=await createImportedCompanion(T,await response.arrayBuffer(),{anisotropy:engine==='webgl'?Math.min(8,renderer.capabilities.getMaxAnisotropy()):1,createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;}});
+    const [response,handResponse]=await Promise.all([fetch('assets/robot-companion/pawny/character-refined.glb'),fetch('assets/robot-companion/pawny/hand-relaxed.json?v=cute-hand-5')]);
+    if(!response.ok||!handResponse.ok)throw Error('The character file could not load. Please refresh the page.');
+    const [characterBytes,handData]=await Promise.all([response.arrayBuffer(),handResponse.json()]);
+    const rig=await createImportedCompanion(T,characterBytes,{handData,anisotropy:engine==='webgl'?Math.min(8,renderer.capabilities.getMaxAnisotropy()):1,createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;}});
     if(!rig.detail||rig.detail.eyes.length!==2)throw Error('The eye rig could not load. Please refresh the page.');
-    scene.add(rig.root);root.dataset.handRevision=rig.source.handRepair?'rebuilt-v2':'source';root.dataset.eyeRig='independent-3d';root.dataset.materialGroups=String(rig.mesh.geometry.groups.length);
+    if(!rig.detail.hand||!rig.detail.leftHand)throw Error('The refined hands could not load. Please refresh the page.');
+    scene.add(rig.root);root.dataset.handRevision=rig.detail.handRevision;root.dataset.refinedHands='2';root.dataset.faceRevision='gentle-expression-v5';root.dataset.eyeRig='independent-3d';root.dataset.materialGroups=String(rig.mesh.geometry.groups.length);
     const reduced=window.matchMedia('(prefers-reduced-motion:reduce)'),clock=()=>performance.now()/1000,start=clock();
-    const state={idle:!reduced.matches,pointer:false,holdHead:true,face:false,yaw:0,pitch:0,desiredYaw:0,desiredPitch:0,helloAt:reduced.matches?-100:start+.6,hopAt:-100,turnAt:-100,blinkAt:-100,blinkPeak:0,nextBlink:start+2.8,idlePhase:-1,last:start,lastDraw:0,frames:0,dirty:true};
+    const state={idle:!reduced.matches,pointer:false,holdHead:true,face:false,hand:false,yaw:0,pitch:0,desiredYaw:0,desiredPitch:0,helloAt:reduced.matches?-100:start+.6,hopAt:-100,turnAt:-100,blinkAt:-100,blinkPeak:0,nextBlink:start+2.8,idlePhase:-1,last:start,lastDraw:0,frames:0,dirty:true};
     const gazeTarget=new T.Vector3(0,.46,3),target=new T.Vector3(),ndc=new T.Vector2(),ray=new T.Raycaster(),plane=new T.Plane(new T.Vector3(0,0,1),-1.6);
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
     const blinkClose=engine==='webgl'?.085:.14,blinkHold=engine==='webgl'?.035:.10,blinkOpen=engine==='webgl'?.155:.28;
@@ -53,7 +55,7 @@
       rig.setPose({yaw:state.yaw,pitch:state.pitch+nod,roll,hop:lift,turn:rotation});
       const blink=blinkValue(now),gaze=rig.detail.update({target:gazeTarget,dt,blink});state.blinkPeak=Math.max(state.blinkPeak,blink);
       renderer.render(scene,camera);state.frames++;state.lastDraw=performance.now();
-      root.dataset.ready='true';root.dataset.engine=engine;root.dataset.headYaw=state.yaw.toFixed(5);root.dataset.headPitch=(state.pitch+nod).toFixed(5);root.dataset.eyeLeftYaw=gaze.leftYaw.toFixed(5);root.dataset.eyeRightYaw=gaze.rightYaw.toFixed(5);root.dataset.eyeLeftPitch=gaze.leftPitch.toFixed(5);root.dataset.eyeRightPitch=gaze.rightPitch.toFixed(5);root.dataset.blink=blink.toFixed(4);root.dataset.headHeld=String(state.holdHead);root.dataset.action=action;root.dataset.frames=String(state.frames);root.dataset.triangles=String(rig.triangleCount);root.dataset.rigJoints='4';root.dataset.view=state.face?'face':'full';
+      root.dataset.ready='true';root.dataset.engine=engine;root.dataset.headYaw=state.yaw.toFixed(5);root.dataset.headPitch=(state.pitch+nod).toFixed(5);root.dataset.eyeLeftYaw=gaze.leftYaw.toFixed(5);root.dataset.eyeRightYaw=gaze.rightYaw.toFixed(5);root.dataset.eyeLeftPitch=gaze.leftPitch.toFixed(5);root.dataset.eyeRightPitch=gaze.rightPitch.toFixed(5);root.dataset.blink=blink.toFixed(4);root.dataset.headHeld=String(state.holdHead);root.dataset.action=action;root.dataset.frames=String(state.frames);root.dataset.triangles=String(rig.triangleCount);root.dataset.rigJoints='4';root.dataset.view=state.face?'face':state.hand?'hand':'full';
       root.dataset.blinkPeak=state.blinkPeak.toFixed(4);
       if(engine==='software-3d'){const stats=renderer.getStats();root.dataset.renderMs=stats.renderMs.toFixed(1);root.dataset.staticReused=String(stats.staticReused);}
       state.dirty=(!state.holdHead&&(Math.abs(desiredYaw-state.yaw)+Math.abs(desiredPitch-state.pitch)>.000025))||gaze.settling||blink>0||gestureActive(now);
@@ -63,8 +65,9 @@
     }
     function resize(){
       const r=stage.getBoundingClientRect();renderer.setSize(Math.max(1,r.width),Math.max(1,r.height),false);camera.aspect=r.width/r.height;
-      const z=state.face?Math.max(2.35,1.42/(2*Math.tan(34*Math.PI/360)*camera.aspect)):camera.aspect<.8?4.9:4.4;
-      camera.position.set(0,state.face?.48:.12,z);camera.lookAt(0,state.face?.43:0,0);camera.updateProjectionMatrix();draw(clock());
+      if(state.hand){const distance=Math.max(.92,.34/(2*Math.tan(34*Math.PI/360)*camera.aspect));camera.position.set(-.045,-.25,.38+distance);camera.lookAt(-.045,-.25,.38);}
+      else{const z=state.face?Math.max(2.35,1.42/(2*Math.tan(34*Math.PI/360)*camera.aspect)):camera.aspect<.8?4.9:4.4;camera.position.set(0,state.face?.48:.12,z);camera.lookAt(0,state.face?.43:0,0);}
+      camera.updateProjectionMatrix();draw(clock());
     }
     function pointer(e){
       const r=canvas.getBoundingClientRect();ndc.set(clamp((e.clientX-r.left)/r.width*2-1,-2,2),clamp(1-(e.clientY-r.top)/r.height*2,-2,2));ray.setFromCamera(ndc,camera);
@@ -81,9 +84,11 @@
     function action(name){const now=clock();if(name==='hello'){state.helloAt=now;state.blinkAt=now+.22;}if(name==='hop')state.hopAt=now;if(name==='turn')state.turnAt=now;state.dirty=true;}
     for(const name of['hello','hop','turn'])root.querySelector('[data-action="'+name+'"]').addEventListener('click',()=>action(name));
     canvas.addEventListener('click',()=>action('hop'));
-    const hold=root.querySelector('[data-action="hold"]'),face=root.querySelector('[data-action="face"]'),idle=root.querySelector('[data-action="idle"]');
+    const hold=root.querySelector('[data-action="hold"]'),face=root.querySelector('[data-action="face"]'),handView=root.querySelector('[data-action="hand"]'),idle=root.querySelector('[data-action="idle"]');
     hold.addEventListener('click',()=>{state.holdHead=!state.holdHead;hold.textContent=state.holdHead?'Release head':'Hold head';hold.setAttribute('aria-pressed',String(state.holdHead));state.dirty=true;});
-    face.addEventListener('click',()=>{state.face=!state.face;face.textContent=state.face?'Full view':'Face view';face.setAttribute('aria-pressed',String(state.face));resize();});
+    function viewLabels(){face.textContent=state.face?'Full view':'Face view';face.setAttribute('aria-pressed',String(state.face));handView.textContent=state.hand?'Full view':'Hand view';handView.setAttribute('aria-pressed',String(state.hand));}
+    face.addEventListener('click',()=>{state.face=!state.face;state.hand=false;viewLabels();resize();});
+    handView.addEventListener('click',()=>{state.hand=!state.hand;state.face=false;viewLabels();resize();});
     function idleLabel(){idle.textContent=state.idle?'Pause idle':'Resume idle';idle.setAttribute('aria-pressed',String(!state.idle));root.dataset.idle=String(state.idle);}
     idle.addEventListener('click',()=>{state.idle=!state.idle;state.nextBlink=clock()+2.8;idleLabel();state.dirty=true;});
     reduced.addEventListener('change',e=>{state.idle=!e.matches;state.nextBlink=clock()+2.8;idleLabel();state.dirty=true;});

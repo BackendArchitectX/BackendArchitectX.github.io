@@ -63,7 +63,7 @@ async function createImportedCompanion(T,arrayBuffer,options={}) {
   setPose();
   const model={root,mesh,head,body,pose,setPose,triangleCount:g.index.count/3,source:j.extras};
   const builder=options.detailBuilder||(typeof createCompanionDetailRig==='function'?createCompanionDetailRig:null);
-  if(builder){model.detail=builder(T,model,{pixels:textures[0].userData.pixels});model.triangleCount=model.detail.triangleCount;}
+  if(builder){model.detail=builder(T,model,{pixels:textures[0].userData.pixels,handData:options.handData});model.triangleCount=model.detail.triangleCount;}
   return model;
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={readCompanionGLB,createImportedCompanion};

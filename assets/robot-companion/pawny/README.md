@@ -25,3 +25,11 @@ Upper and lower eyelids deform over the spherical eyes for blinks. Their skin te
 WebGL uses transparent rendering, environment lighting and soft shadows. In the software fallback, eye-only frames reuse a cached body render; head, body or camera changes invalidate that cache. Reduced-motion settings disable idle movement and automatic blinking while keeping explicit controls available.
 
 Validation covers stationary-head pupil movement, gaze compensation during head turns, complete eyelid closure, finite geometry, mobile framing and identical cached/full-rebuild output. The existing refined GLB passed the Khronos glTF validator with zero errors and warnings. Its source sculpt and texture resolution remain the main limits on realism.
+
+## Gentler expression and relaxed hands
+
+The current runtime revision opens the eyes slightly, enlarges the irises and pupils, warms the amber colour and raises the mouth corners with a small native mesh deformation. A normal transform follows the facial deformation. Independent eye tracking and full eyelid closure remain active.
+
+`hand-relaxed.json` contains two new four-digit hand meshes. The raised hand has shorter fingers, a clearer opposable thumb and a wrist angle that follows the supplied reference more horizontally across the chest. The three long fingertip pads are positioned against the actual armour surface with a small clearance. The hanging hand replaces the fused pointed source shape with a cupped palm and softly curled fingers. Both meshes are single connected, closed surfaces with consistent outward winding.
+
+The hand colours retain mottled albedo sampled from the supplied character's cheek texture. Skin relief, knuckles and shallow creases are part of the geometry and vertex colour, rather than a uniform glove colour. The old raised-hand primitive and hanging-hand region are removed from the runtime body mesh. The existing source GLB is retained unchanged. `Hand view` provides a close-up of the raised hand; it is mutually exclusive with `Face view`.
