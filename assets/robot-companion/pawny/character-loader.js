@@ -38,6 +38,8 @@ async function createImportedCompanion(T,arrayBuffer,options={}) {
     const material=eye?new T.MeshPhysicalMaterial({clearcoat:.2,clearcoatRoughness:.18}):new T.MeshStandardMaterial();
     material.name=source.name||'Character surface';material.vertexColors=!!g.attributes.color;
     material.roughness=p.roughnessFactor??1;material.metalness=p.metallicFactor??1;
+    if(source.name==='Organic skin')material.color.setRGB(.96,1,.93);
+    if(source.name==='Copper armour'){material.color.setRGB(.96,.93,.89);material.metalness*=.88;}
     if(p.baseColorTexture)material.map=textureAt(p.baseColorTexture.index);
     if(p.metallicRoughnessTexture){const texture=textureAt(p.metallicRoughnessTexture.index);material.roughnessMap=texture;material.metalnessMap=texture;material.userData.metalRoughPixels=texture.userData.pixels;}
     const finish=source.extras||{};material.userData.roughnessMin=finish.roughnessMin??.045;material.userData.roughnessMax=finish.roughnessMax??1;
@@ -59,6 +61,9 @@ async function createImportedCompanion(T,arrayBuffer,options={}) {
     return pose;
   }
   setPose();
-  return {root,mesh,head,body,pose,setPose,triangleCount:g.index.count/3,source:j.extras};
+  const model={root,mesh,head,body,pose,setPose,triangleCount:g.index.count/3,source:j.extras};
+  const builder=options.detailBuilder||(typeof createCompanionDetailRig==='function'?createCompanionDetailRig:null);
+  if(builder){model.detail=builder(T,model,{pixels:textures[0].userData.pixels});model.triangleCount=model.detail.triangleCount;}
+  return model;
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={readCompanionGLB,createImportedCompanion};

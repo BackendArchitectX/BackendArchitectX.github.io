@@ -1,21 +1,21 @@
 /* Deferred geometry fallback with GGX lighting, studio reflections, shadows and contact shading. */
 function createCompanionSoftwareRenderer(T,canvas){
   const ctx=canvas.getContext('2d');if(!ctx)throw Error('A drawing context is unavailable.');
-  let width=640,height=420,displayWidth=640,displayHeight=420,quality=1,image,depth,owner,world,normalBuffer,uvBuffer,colorBuffer;
+  let width=640,height=420,displayWidth=640,displayHeight=420,quality=1,image,depth,owner,world,normalBuffer,uvBuffer,colorBuffer,opacityBuffer,dynamicTouched,staticCache=null;
   const vp=new T.Matrix4(),normalMatrix=new T.Matrix3(),shadowVP=new T.Matrix4(),shadowSize=256,shadowDepth=new Float32Array(shadowSize*shadowSize);
   const lightCamera=new T.OrthographicCamera(-2.8,2.8,3.1,-2.5,.1,19);lightCamera.position.set(-3,5,5);lightCamera.lookAt(0,.55,0);lightCamera.updateMatrixWorld(true);shadowVP.multiplyMatrices(lightCamera.projectionMatrix,lightCamera.matrixWorldInverse);
-  const se=shadowVP.elements,materials=[null],materialIds=new WeakMap(),stats={renderMs:0,meshes:0,triangles:0};
+  const se=shadowVP.elements,materials=[null],materialIds=new WeakMap(),stats={renderMs:0,meshes:0,triangles:0,staticReused:false,baseBuilds:0};
   const srgb=new Float32Array(256),output=new Uint8ClampedArray(8193);
   for(let i=0;i<256;i++){const v=i/255;srgb[i]=v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);}
-  for(let i=0;i<output.length;i++){let v=i/1024*.98;v=Math.min(1,Math.max(0,(v*(2.51*v+.03))/(v*(2.43*v+.59)+.14)));output[i]=255*(v<=.0031308?v*12.92:1.055*Math.pow(v,1/2.4)-.055);}
+  for(let i=0;i<output.length;i++){let v=i/1024*.88;v=Math.min(1,Math.max(0,(v*(2.51*v+.03))/(v*(2.43*v+.59)+.14)));output[i]=255*(v<=.0031308?v*12.92:1.055*Math.pow(v,1/2.4)-.055);}
   const normalized=(x,y,z)=>{const l=Math.hypot(x,y,z);return[x/l,y/l,z/l];};
-  const key=normalized(-3,4.45,5),fill=normalized(4,1.45,4),lights=[{dir:key,rgb:[3.4,3.13,2.70],shadow:true},{dir:fill,rgb:[.70,.83,.92],shadow:false}];
+  const key=normalized(-3,4.45,5),fill=normalized(4,1.45,4),lights=[{dir:key,rgb:[2.5,2.32,2.08],shadow:true},{dir:fill,rgb:[.8,.85,.90],shadow:false}];
   function softbox(direction,w,h,rgb){const right=normalized(direction[2],0,-direction[0]),up=[direction[1]*right[2],direction[2]*right[0]-direction[0]*right[2],-direction[1]*right[0]];return {direction,right,up,w,h,rgb};}
-  const boxes=[softbox(normalized(-.48,.56,.68),.21,.43,[5.8,5.55,5.0]),softbox(normalized(.62,.28,.73),.13,.34,[3.0,3.5,3.9])];
-  function allocate(){const scale=Math.min(1,850/displayWidth)*quality;width=Math.max(1,Math.round(displayWidth*scale));height=Math.max(1,Math.round(displayHeight*scale));canvas.width=width;canvas.height=height;image=ctx.createImageData(width,height);depth=new Float32Array(width*height);owner=new Uint16Array(width*height);world=new Float32Array(width*height*3);normalBuffer=new Float32Array(width*height*3);uvBuffer=new Float32Array(width*height*2);colorBuffer=new Float32Array(width*height*3);}
+  const boxes=[softbox(normalized(-.48,.56,.68),.21,.43,[3.8,3.6,3.3]),softbox(normalized(.62,.28,.73),.13,.34,[2.2,2.5,2.7])];
+  function allocate(){const scale=Math.min(1,850/displayWidth)*quality;width=Math.max(1,Math.round(displayWidth*scale));height=Math.max(1,Math.round(displayHeight*scale));canvas.width=width;canvas.height=height;image=ctx.createImageData(width,height);depth=new Float32Array(width*height);owner=new Uint16Array(width*height);world=new Float32Array(width*height*3);normalBuffer=new Float32Array(width*height*3);uvBuffer=new Float32Array(width*height*2);colorBuffer=new Float32Array(width*height*3);opacityBuffer=new Float32Array(width*height);dynamicTouched=new Uint8Array(width*height);staticCache=null;}
   function materialId(m){
     if(materialIds.has(m))return materialIds.get(m);const id=materials.length;materialIds.set(m,id);
-    materials.push({source:m,color:[m.color.r,m.color.g,m.color.b],rough:Math.max(.045,m.roughness??.6),metal:m.metalness||0,coat:m.clearcoat||0,basic:!!m.isMeshBasicMaterial,vertexColors:!!m.vertexColors,roughMin:m.userData.roughnessMin??.045,roughMax:m.userData.roughnessMax??1,tex:m.map&&m.map.userData.pixels,surface:m.userData.softwareSurface,metalRough:m.userData.metalRoughPixels,emissive:m.emissive?[m.emissive.r*(m.emissiveIntensity??1),m.emissive.g*(m.emissiveIntensity??1),m.emissive.b*(m.emissiveIntensity??1)]:[0,0,0]});return id;
+    materials.push({source:m,color:[m.color.r,m.color.g,m.color.b],rough:Math.max(.045,m.roughness??.6),metal:m.metalness||0,coat:m.clearcoat||0,specular:m.specularIntensity??1,basic:!!m.isMeshBasicMaterial,vertexColors:!!m.vertexColors,transparent:!!m.transparent,opacity:m.opacity??1,roughMin:m.userData.roughnessMin??.045,roughMax:m.userData.roughnessMax??1,tex:m.map&&m.map.userData.pixels,surface:m.userData.softwareSurface,metalRough:m.userData.metalRoughPixels,emissive:m.emissive?[m.emissive.r*(m.emissiveIntensity??1),m.emissive.g*(m.emissiveIntensity??1),m.emissive.b*(m.emissiveIntensity??1)]:[0,0,0]});return id;
   }
   function project(source,destination,matrix,w,h){
     const e=matrix.elements;
@@ -38,13 +38,19 @@ function createCompanionSoftwareRenderer(T,canvas){
         if(b0>=-1e-6&&b1>=-1e-6&&b2>=-1e-6){
           const zz=b0*s[a+2]+b1*s[b+2]+b2*s[c+2],at=yy*w+xx;
           if(zz>=-1&&zz<=1&&zz<zbuffer[at]){
-            zbuffer[at]=zz;
-            if(!shadow){
+            if(shadow)zbuffer[at]=zz;
+            else{
               const sum=b0*s[a+3]+b1*s[b+3]+b2*s[c+3],q0=b0*s[a+3]/sum,q1=b1*s[b+3]/sum,q2=b2*s[c+3]/sum,o=at*3;
+              const m=materials[id];let opacity=m.opacity;
+              if(m.transparent&&m.tex&&uv){const u=q0*uv.getX(ia)+q1*uv.getX(ib)+q2*uv.getX(ic),v=q0*uv.getY(ia)+q1*uv.getY(ib)+q2*uv.getY(ic),tx=Math.max(0,Math.min(m.tex.width-1,Math.round(u*(m.tex.width-1)))),ty=Math.max(0,Math.min(m.tex.height-1,Math.round(v*(m.tex.height-1))));opacity*=m.tex.data[(ty*m.tex.width+tx)*4+3]/255;}
+              if(opacity>.003){
+              zbuffer[at]=zz;opacityBuffer[at]=opacity;
               owner[at]=id;
+              if(record.dynamic)dynamicTouched[at]=1;
               for(let k=0;k<3;k++){world[o+k]=q0*p[ia*3+k]+q1*p[ib*3+k]+q2*p[ic*3+k];normalBuffer[o+k]=flip*(q0*n[ia*3+k]+q1*n[ib*3+k]+q2*n[ic*3+k]);}
               if(uv){uvBuffer[at*2]=q0*uv.getX(ia)+q1*uv.getX(ib)+q2*uv.getX(ic);uvBuffer[at*2+1]=q0*uv.getY(ia)+q1*uv.getY(ib)+q2*uv.getY(ic);}else{uvBuffer[at*2]=uvBuffer[at*2+1]=0;}
               if(colors){colorBuffer[o]=q0*colors.getX(ia)+q1*colors.getX(ib)+q2*colors.getX(ic);colorBuffer[o+1]=q0*colors.getY(ia)+q1*colors.getY(ib)+q2*colors.getY(ic);colorBuffer[o+2]=q0*colors.getZ(ia)+q1*colors.getZ(ib)+q2*colors.getZ(ic);}
+              }
             }
           }
         }
@@ -64,10 +70,10 @@ function createCompanionSoftwareRenderer(T,canvas){
     const u=Math.abs((x*box.right[0]+y*box.right[1]+z*box.right[2])/forward),v=Math.abs((x*box.up[0]+y*box.up[1]+z*box.up[2])/forward),blur=.016+rough*rough*.65;
     let a=Math.max(0,Math.min(1,(box.w+blur-u)/(2*blur))),b=Math.max(0,Math.min(1,(box.h+blur-v)/(2*blur)));a=a*a*(3-2*a);b=b*b*(3-2*b);return a*b;
   }
-  function shade(camera){
+  function shade(camera,dynamicOnly=false){
     const cp=camera.matrixWorld.elements,pixels=image.data,offsets=[[-5,0],[5,0],[0,-5],[0,5]];
     for(let at=0;at<owner.length;at++){
-      const id=owner[at];if(!id)continue;const m=materials[id],o=at*3,x=world[o],y=world[o+1],z=world[o+2];
+      const id=owner[at];if(!id||(dynamicOnly&&!dynamicTouched[at]))continue;const m=materials[id],o=at*3,x=world[o],y=world[o+1],z=world[o+2];
       let nx=normalBuffer[o],ny=normalBuffer[o+1],nz=normalBuffer[o+2],nl=Math.hypot(nx,ny,nz)||1;nx/=nl;ny/=nl;nz/=nl;
       let ar=m.color[0],ag=m.color[1],ab=m.color[2],rough=m.rough,metal=m.metal,ti=0;
       if(m.vertexColors){ar*=colorBuffer[o];ag*=colorBuffer[o+1];ab*=colorBuffer[o+2];}
@@ -89,10 +95,10 @@ function createCompanionSoftwareRenderer(T,canvas){
       let cr=0,cg=0,cb=0;
       if(m.basic){cr=ar;cg=ag;cb=ab;}else{
         let vx=cp[12]-x,vy=cp[13]-y,vz=cp[14]-z;const vl=Math.hypot(vx,vy,vz)||1;vx/=vl;vy/=vl;vz/=vl;const nv=Math.max(.001,nx*vx+ny*vy+nz*vz);
-        const f0r=.04*(1-metal)+ar*metal,f0g=.04*(1-metal)+ag*metal,f0b=.04*(1-metal)+ab*metal;
+        const f0r=.04*m.specular*(1-metal)+ar*metal,f0g=.04*m.specular*(1-metal)+ag*metal,f0b=.04*m.specular*(1-metal)+ab*metal;
         let occ=0;const px=at%width,py=Math.floor(at/width);
         for(const [dx,dy]of offsets){const xx=px+dx,yy=py+dy;if(xx<0||xx>=width||yy<0||yy>=height)continue;const other=yy*width+xx;if(!owner[other])continue;const t=other*3,ox=world[t]-x,oy=world[t+1]-y,oz=world[t+2]-z,dist=Math.hypot(ox,oy,oz);if(dist>.008&&dist<.30)occ+=Math.max(0,(nx*ox+ny*oy+nz*oz-.012)/dist)*(1-dist/.30);}
-        const ao=1-Math.min(.38,occ*.27),ambient=(.32+.12*Math.max(0,ny))*ao*(1-metal);
+        const ao=1-Math.min(.38,occ*.27),ambient=(.28+.10*Math.max(0,ny))*ao*(1-metal);
         cr=ar*ambient;cg=ag*ambient;cb=ab*ambient;
         const alpha=rough*rough,a2=alpha*alpha;
         for(const light of lights){
@@ -112,18 +118,12 @@ function createCompanionSoftwareRenderer(T,canvas){
         if(m.coat){let wr=.06,wg=.07,wb=.07;for(const box of boxes){const w=rectWeight(box,rx,ry,rz,.04);wr+=box.rgb[0]*w;wg+=box.rgb[1]*w;wb+=box.rgb[2]*w;}const c=m.coat*(.04+.96*pow);cr=cr*(1-c)+wr*c;cg=cg*(1-c)+wg*c;cb=cb*(1-c)+wb*c;}
       }
       cr+=m.emissive[0];cg+=m.emissive[1];cb+=m.emissive[2];const pixel=at*4;
-      pixels[pixel]=output[Math.min(8192,Math.max(0,Math.round(cr*1024)))];pixels[pixel+1]=output[Math.min(8192,Math.max(0,Math.round(cg*1024)))];pixels[pixel+2]=output[Math.min(8192,Math.max(0,Math.round(cb*1024)))];pixels[pixel+3]=255;
+      const alpha=opacityBuffer[at],under=staticCache&&staticCache.pixels;
+      pixels[pixel]=output[Math.min(8192,Math.max(0,Math.round(cr*1024)))]*alpha+(under?under[pixel]:0)*(1-alpha);pixels[pixel+1]=output[Math.min(8192,Math.max(0,Math.round(cg*1024)))]*alpha+(under?under[pixel+1]:0)*(1-alpha);pixels[pixel+2]=output[Math.min(8192,Math.max(0,Math.round(cb*1024)))]*alpha+(under?under[pixel+2]:0)*(1-alpha);pixels[pixel+3]=255*alpha+(under?under[pixel+3]:0)*(1-alpha);
     }
   }
-  const renderer={
-    domElement:canvas,setPixelRatio(){},
-    setSize(w,h){displayWidth=w;displayHeight=h;allocate();},
-    setQuality(q){q=Math.max(.5,Math.min(1,q));if(Math.abs(q-quality)>.01){quality=q;allocate();}},
-    getStats(){return {...stats};},
-    render(scene,camera){
-      const began=performance.now();scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);vp.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);depth.fill(Infinity);owner.fill(0);image.data.fill(0);shadowDepth.fill(Infinity);const records=[];stats.triangles=0;
-      scene.traverseVisible(object=>{
-        if(!object.isMesh||object.material.isShadowMaterial)return;const geometry=object.geometry,p=geometry.attributes.position,n=geometry.attributes.normal;if(!p)return;
+  function prepareRecord(object){
+    const geometry=object.geometry,p=geometry.attributes.position,n=geometry.attributes.normal;
         let work=object.userData.pbrWork;if(!work||work.world.length!==p.count*3)work=object.userData.pbrWork={world:new Float32Array(p.count*3),normals:new Float32Array(p.count*3),screen:new Float32Array(p.count*4),shadow:new Float32Array(p.count*4)};
         const e=object.matrixWorld.elements;normalMatrix.getNormalMatrix(object.matrixWorld);const nm=normalMatrix.elements;
         const pose=object.userData.companionPose,skin=geometry.attributes.skinWeight;
@@ -134,14 +134,37 @@ function createCompanionSoftwareRenderer(T,canvas){
           if(pose){const r=rotation,w=skin.getY(i),dx=x,dy=y+.018,dz=z,rx=r[0]*dx+r[4]*dy+r[8]*dz,ry=r[1]*dx+r[5]*dy+r[9]*dz-.018,rz=r[2]*dx+r[6]*dy+r[10]*dz; x+=(rx-x)*w;y+=(ry-y)*w+pose.bodyOffset;z+=(rz-z)*w;const rnx=r[0]*ax+r[4]*ay+r[8]*az,rny=r[1]*ax+r[5]*ay+r[9]*az,rnz=r[2]*ax+r[6]*ay+r[10]*az;ax+=(rnx-ax)*w;ay+=(rny-ay)*w;az+=(rnz-az)*w;}
           work.world[at]=e[0]*x+e[4]*y+e[8]*z+e[12];work.world[at+1]=e[1]*x+e[5]*y+e[9]*z+e[13];work.world[at+2]=e[2]*x+e[6]*y+e[10]*z+e[14];let nx=nm[0]*ax+nm[3]*ay+nm[6]*az,ny=nm[1]*ax+nm[4]*ay+nm[7]*az,nz=nm[2]*ax+nm[5]*ay+nm[8]*az,len=Math.hypot(nx,ny,nz)||1;work.normals[at]=nx/len;work.normals[at+1]=ny/len;work.normals[at+2]=nz/len;
         }
-        project(work.world,work.screen,vp,width,height);project(work.world,work.shadow,shadowVP,shadowSize,shadowSize);const record={...work,geometry,object};records.push(record);
-        const index=geometry.index&&geometry.index.array,count=index?index.length:p.count;stats.triangles+=count/3;
-        for(let i=0;i<count;i+=3)triangle(record,index?index[i]:i,index?index[i+1]:i+1,index?index[i+2]:i+2,0,true);
-      });
-      for(const record of records){const g=record.geometry,index=g.index&&g.index.array,count=index?index.length:g.attributes.position.count,groups=g.groups.length?g.groups:[{start:0,count,materialIndex:0}];for(const group of groups){const m=Array.isArray(record.object.material)?record.object.material[group.materialIndex]:record.object.material;if(!m||m.visible===false)continue;const id=materialId(m);for(let i=group.start;i<group.start+group.count;i+=3)triangle(record,index?index[i]:i,index?index[i+1]:i+1,index?index[i+2]:i+2,id,false);}}
-      shade(camera);ctx.putImageData(image,0,0);
-      const p=new T.Vector3(0,-1.13,.05).applyMatrix4(vp),companion=scene.getObjectByName('CopperCapCompanion'),lift=companion?Math.max(0,companion.position.y):0;
-      ctx.save();ctx.globalCompositeOperation='destination-over';ctx.translate((p.x*.5+.5)*width,(-p.y*.5+.5)*height);ctx.scale(width*.075*(1+lift),height*.021*(1+lift));const shadow=ctx.createRadialGradient(0,0,0,0,0,1);shadow.addColorStop(0,'rgba(15,20,24,'+(.22-lift*.18)+')');shadow.addColorStop(1,'rgba(15,20,24,0)');ctx.fillStyle=shadow;ctx.beginPath();ctx.arc(0,0,1,0,Math.PI*2);ctx.fill();ctx.restore();stats.meshes=records.length;stats.renderMs=performance.now()-began;
+        project(work.world,work.screen,vp,width,height);project(work.world,work.shadow,shadowVP,shadowSize,shadowSize);return {...work,geometry,object,dynamic:!!object.userData.dynamicEye};
+  }
+  function paint(records,shadow){
+    for(const record of records){
+      const g=record.geometry,index=g.index&&g.index.array,count=index?index.length:g.attributes.position.count;
+      if(shadow){if(record.object.castShadow===false)continue;for(let i=0;i<count;i+=3)triangle(record,index?index[i]:i,index?index[i+1]:i+1,index?index[i+2]:i+2,0,true);continue;}
+      const groups=g.groups.length?g.groups:[{start:0,count,materialIndex:0}];
+      for(const group of groups){const m=Array.isArray(record.object.material)?record.object.material[group.materialIndex]:record.object.material;if(!m||m.visible===false)continue;const id=materialId(m);for(let i=group.start;i<group.start+group.count;i+=3)triangle(record,index?index[i]:i,index?index[i+1]:i+1,index?index[i+2]:i+2,id,false);}
+    }
+  }
+  function remember(key){staticCache={key,depth:depth.slice(),owner:owner.slice(),world:world.slice(),normals:normalBuffer.slice(),uv:uvBuffer.slice(),colors:colorBuffer.slice(),opacity:opacityBuffer.slice(),shadow:shadowDepth.slice(),pixels:image.data.slice()};}
+  function restore(){depth.set(staticCache.depth);owner.set(staticCache.owner);world.set(staticCache.world);normalBuffer.set(staticCache.normals);uvBuffer.set(staticCache.uv);colorBuffer.set(staticCache.colors);opacityBuffer.set(staticCache.opacity);shadowDepth.set(staticCache.shadow);image.data.set(staticCache.pixels);}
+  function signature(objects,camera){
+    let key=width+','+height+':'+camera.projectionMatrix.elements.concat(camera.matrixWorld.elements).map(x=>x.toFixed(5)).join(',');
+    for(const object of objects){const g=object.geometry,pose=object.userData.companionPose;key+='|'+object.uuid+':'+object.matrixWorld.elements.map(x=>x.toFixed(5)).join(',')+':'+g.attributes.position.version+':'+(g.attributes.normal?g.attributes.normal.version:0)+':'+(g.index?g.index.count:0);if(pose)key+=':'+['yaw','pitch','roll','bodyOffset'].map(k=>pose[k].toFixed(5)).join(',');const ms=Array.isArray(object.material)?object.material:[object.material];key+=':'+ms.map(m=>m.uuid+','+m.version).join(';');}
+    return key;
+  }
+  const renderer={
+    domElement:canvas,setPixelRatio(){},
+    setSize(w,h){displayWidth=w;displayHeight=h;allocate();},
+    setQuality(q){q=Math.max(.5,Math.min(1,q));if(Math.abs(q-quality)>.01){quality=q;allocate();}},
+    getStats(){return {...stats};},invalidateCache(){staticCache=null;},
+    render(scene,camera){
+      const began=performance.now();scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);vp.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
+      const base=[],dynamic=[];stats.triangles=0;
+      scene.traverseVisible(object=>{if(!object.isMesh||object.material.isShadowMaterial||!object.geometry.attributes.position)return;(object.userData.dynamicEye?dynamic:base).push(object);const g=object.geometry;stats.triangles+=(g.index?g.index.count:g.attributes.position.count)/3;});
+      const key=signature(base,camera);stats.staticReused=!!staticCache&&staticCache.key===key;
+      if(!stats.staticReused){depth.fill(Infinity);owner.fill(0);image.data.fill(0);shadowDepth.fill(Infinity);dynamicTouched.fill(0);const records=base.map(prepareRecord);paint(records,true);paint(records,false);shade(camera);remember(key);stats.baseBuilds++;}else restore();
+      dynamicTouched.fill(0);const records=dynamic.map(prepareRecord);paint(records,true);paint(records,false);shade(camera,true);ctx.putImageData(image,0,0);
+      const p=new T.Vector3(0,-1.13,.05).applyMatrix4(vp),companion=scene.getObjectByName('PawnyCompanion'),lift=companion?Math.max(0,companion.position.y):0;
+      ctx.save();ctx.globalCompositeOperation='destination-over';ctx.translate((p.x*.5+.5)*width,(-p.y*.5+.5)*height);ctx.scale(width*.075*(1+lift),height*.021*(1+lift));const shadow=ctx.createRadialGradient(0,0,0,0,0,1);shadow.addColorStop(0,'rgba(15,20,24,'+(.18-lift*.18)+')');shadow.addColorStop(1,'rgba(15,20,24,0)');ctx.fillStyle=shadow;ctx.beginPath();ctx.arc(0,0,1,0,Math.PI*2);ctx.fill();ctx.restore();stats.meshes=base.length+dynamic.length;stats.renderMs=performance.now()-began;
     }
   };return renderer;
 }
